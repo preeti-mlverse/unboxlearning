@@ -1,0 +1,18 @@
+.env
+data/
+web/node_modules/
+web/dist/
+__pycache__/
+*.pyc
+build/
+
+# large or raw material: kept locally, not in the repository
+sample pdf's/
+characters/
+logo/
+landing/
+Deep_Agents_Python_Docs.pdf
+site/public/
+*.zip
+.claude/
+*.log

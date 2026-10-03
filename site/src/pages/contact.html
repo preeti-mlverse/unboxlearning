@@ -1,0 +1,56 @@
+<!--
+title: Contact
+description: Get early access, send us something to unbox, or talk to us about partnerships, research and grants. We reply within two working days.
+nav: contact
+-->
+<section class="page-hero">
+  <div class="hex-field"></div>
+  <div class="wrap">
+    <p class="crumbs"><a href="/">Home</a> / Contact</p>
+    <h1>Tell us what you teach.</h1>
+    <p class="lede">Ask for early access, send us something to unbox, or talk to us about partnerships, research and grants. We reply within two working days.</p>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap grid-2">
+    <form class="form" id="contact-form" novalidate>
+      <div class="two">
+        <label for="f-name">Your name<input id="f-name" name="name" autocomplete="name" required></label>
+        <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+      </div>
+      <div class="two">
+        <label for="f-org">Organisation<input id="f-org" name="org" autocomplete="organization" placeholder="School, NGO, company or 'independent'"></label>
+        <label for="f-topic">What's it about?
+          <select id="f-topic" name="topic">
+            <option value="early-access">Early access</option>
+            <option value="demo">Unbox one of my files</option>
+            <option value="educators">I'm an educator</option>
+            <option value="schools">School or university</option>
+            <option value="ngos">NGO or public program</option>
+            <option value="companies">Company training</option>
+            <option value="partner">Partnership</option>
+            <option value="research">Research & grants</option>
+            <option value="other">Something else</option>
+          </select>
+        </label>
+      </div>
+      <label for="f-msg">What do you teach, and to whom?<textarea id="f-msg" name="message" rows="6" required placeholder="e.g. We train 200 new support staff a year from a 60-page handbook."></textarea></label>
+      <label for="f-web" hidden>Leave this empty<input id="f-web" name="website" tabindex="-1" autocomplete="off"></label>
+      <div><button class="btn btn-violet" type="submit">Send message</button></div>
+      <div class="form-status" id="form-status" role="status" hidden></div>
+    </form>
+    <aside class="contact-side">
+      <p class="eyebrow v">Prefer email or a call?</p>
+      <a class="mail" href="mailto:preeti.agrawal@lightbulblabs.tech">preeti.agrawal@lightbulblabs.tech</a>
+      <a class="tel" href="tel:+917004847355">+91 70048 47355</a>
+      <p>Attach a chapter, handbook or deck and we'll show you what the engine makes from it.</p>
+      <p class="eyebrow v" style="margin-top:10px">What happens next</p>
+      <ul class="tick">
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>We reply within two working days</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>A 30-minute call to understand your learners</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>A sample course built from your material</li>
+      </ul>
+    </aside>
+  </div>
+</section>

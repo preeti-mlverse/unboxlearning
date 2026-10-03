@@ -1,0 +1,46 @@
+<!--
+title: Log in
+description: Log in to UnboxEd.
+nav: login
+-->
+<section class="auth">
+  <div class="hex-field"></div>
+  <div class="wrap auth-grid">
+    <aside class="auth-side">
+      <p class="eyebrow">Welcome back</p>
+      <h1>Ready for <span class="swash">what's next?</span></h1>
+      <ul class="auth-list">
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>Pick up your lessons where you left off</li>
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>Refresh what's due in your memory deck</li>
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>See how your learners are doing</li>
+      </ul>
+      <p class="auth-switch">New to UnboxEd? <a href="/signup/">Create an account</a></p>
+    </aside>
+
+    <div class="auth-card">
+      <form id="login-form" class="form" novalidate>
+        <h2>Log in</h2>
+        <label for="l-id">Email or mobile<input id="l-id" name="id" autocomplete="username" required placeholder="you@example.com or 98765 43210"></label>
+        <label for="l-pass">Password
+          <span class="pass-in"><input id="l-pass" name="password" type="password" autocomplete="current-password" required><button type="button" class="show-pass" aria-label="Show password">Show</button></span>
+        </label>
+        <div class="row-between">
+          <label class="check"><input type="checkbox" name="remember" checked> Keep me logged in</label>
+          <button class="btn-link" type="button" id="to-reset">Forgot password?</button>
+        </div>
+        <button class="btn btn-primary btn-wide" type="submit">Log in</button>
+        <div class="form-status" id="login-status" role="status" hidden></div>
+        <p class="auth-alt">New here? <a href="/signup/">Create an account</a></p>
+      </form>
+
+      <form id="reset-form" class="form" novalidate hidden>
+        <h2>Reset your password</h2>
+        <p class="note">Enter the email you signed up with and we'll send you a link to set a new password.</p>
+        <label for="r-email">Email<input id="r-email" name="email" type="email" autocomplete="email" required></label>
+        <button class="btn btn-primary btn-wide" type="submit">Send reset link</button>
+        <div class="form-status" id="reset-status" role="status" hidden></div>
+        <button class="btn-link" type="button" id="to-login">← Back to log in</button>
+      </form>
+    </div>
+  </div>
+</section>

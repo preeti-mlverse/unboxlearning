@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unbox Learning logo concepts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;600;700&family=DM+Mono:wght@500&display=swap">
+<style>
+  :root { --navy: #1B164B; --sun: #F2B900; --coral: #E65F45; --aqua: #7CC1CA; --violet: #4B32C8; --ground: #F6F4FD; --line: #E2DDF5; --muted: #5E5880; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--navy); font: 16px/1.55 Figtree, system-ui, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 20px 70px; }
+  h1 { font: 800 40px/1.05 "Bricolage Grotesque", system-ui; letter-spacing: -.02em; margin: 0 0 8px; }
+  .intro { color: var(--muted); max-width: 46em; margin: 0 0 28px; }
+  .concept { background: #fff; border: 2px solid var(--line); border-radius: 24px; padding: 26px; margin-bottom: 22px; display: grid; grid-template-columns: 260px 1fr; gap: 28px; }
+  .concept.rec { border: 3px solid var(--navy); box-shadow: 8px 8px 0 var(--sun); }
+  .badge.new { background: var(--aqua); }
+  .badge.box { background: var(--coral); color: #fff; }
+  .badge { display: inline-block; font: 500 11px "DM Mono", monospace; letter-spacing: .1em; text-transform: uppercase; background: var(--sun); padding: 4px 10px; border-radius: 99px; margin-bottom: 8px; }
+  .meta h2 { font: 800 26px "Bricolage Grotesque", system-ui; margin: 0 0 4px; }
+  .meta .num { font: 500 12px "DM Mono", monospace; color: var(--muted); }
+  .meta p { color: var(--muted); margin: 8px 0 0; font-size: 15px; }
+  .meta ul { margin: 10px 0 0; padding-left: 18px; font-size: 14.5px; color: var(--navy); }
+  .uses { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tile { border-radius: 18px; display: grid; place-items: center; padding: 22px; min-height: 170px; position: relative; }
+  .tile small { position: absolute; left: 12px; top: 10px; font: 500 10px "DM Mono", monospace; letter-spacing: .1em; text-transform: uppercase; opacity: .55; }
+  .light { background: var(--ground); } .dark { background: var(--navy); color: #fff; }
+  .lockup { display: flex; align-items: center; gap: 12px; font: 800 30px "Bricolage Grotesque", system-ui; letter-spacing: -.02em; }
+  .lockup img { width: 54px; height: 54px; }
+  .lockup span b { font-weight: 800; } .lockup span i { font-style: normal; font-weight: 600; color: var(--violet); }
+  .dark .lockup span i { color: #B9A8FF; }
+  .big { width: 120px; height: 120px; }
+  .sizes { display: flex; align-items: flex-end; gap: 18px; }
+  .sizes img:nth-child(1) { width: 16px; } .sizes img:nth-child(2) { width: 32px; } .sizes img:nth-child(3) { width: 48px; }
+  .app { width: 96px; height: 96px; border-radius: 24px; background: var(--navy); display: grid; place-items: center; box-shadow: 0 10px 24px rgba(27,22,75,.25); }
+  .app img { width: 64px; }
+  .row2 { display: flex; gap: 26px; align-items: center; }
+  .tab { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--line); border-radius: 10px 10px 0 0; padding: 7px 12px; font-size: 13px; color: var(--navy); }
+  .tab img { width: 16px; }
+  @media (max-width: 820px) { .concept { grid-template-columns: 1fr; } .uses { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Unbox Learning: logo concepts</h1>
+  <p class="intro">Ten marks, each built on one idea from the product. Each is shown on light and dark backgrounds, beside the wordmark, at favicon size (16, 32 and 48 px) and as an app icon. The wordmark is set lowercase in Bricolage Grotesque, the site's heading font.</p>
+
+  <section class="concept rec">
+    <div class="meta">
+      <span class="badge">Recommended</span>
+      <div class="num">Concept 1</div>
+      <h2>Spark Box</h2>
+      <p>An open box seen from above. Its four flaps fan out into a spark: the moment knowledge is unboxed.</p>
+      <ul><li>Four flaps, four colours: read, hear, try, ask</li><li>The pinwheel turn suggests motion and play</li><li>The dot in the middle is the idea itself</li><li>Clearest at 16 px, and easy to animate (flaps opening)</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/1-spark-box.svg" alt="Spark Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/1-spark-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/1-spark-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/1-spark-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/1-spark-box.svg" alt=""><img src="concepts/1-spark-box.svg" alt=""><img src="concepts/1-spark-box.svg" alt=""></div><div class="tab"><img src="concepts/1-spark-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/1-spark-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <div class="num">Concept 2</div>
+      <h2>U-Box</h2>
+      <p>The letter U drawn as an open box, flaps lifted, with an idea sparking out of it.</p>
+      <ul><li>Doubles as the initial: U for Unbox</li><li>Clear story: box opens, idea comes out</li><li>Works as a monogram on its own</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/2-u-box.svg" alt="U-Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/2-u-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/2-u-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/2-u-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/2-u-box.svg" alt=""><img src="concepts/2-u-box.svg" alt=""><img src="concepts/2-u-box.svg" alt=""></div><div class="tab"><img src="concepts/2-u-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/2-u-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <div class="num">Concept 3</div>
+      <h2>Talking Box</h2>
+      <p>The box's lid has become a speech bubble: knowledge comes out as a conversation.</p>
+      <ul><li>Puts the AI tutor and voice-first learning at the centre</li><li>Keeps the isometric box from the current logo</li><li>Busier at 16 px than concepts 1 and 2</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/3-talking-box.svg" alt="Talking Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/3-talking-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/3-talking-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/3-talking-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/3-talking-box.svg" alt=""><img src="concepts/3-talking-box.svg" alt=""><img src="concepts/3-talking-box.svg" alt=""></div><div class="tab"><img src="concepts/3-talking-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/3-talking-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <div class="num">Concept 4</div>
+      <h2>Unfolding Page</h2>
+      <p>A page of text whose corner peels open into a spark: a static document becoming a living experience.</p>
+      <ul><li>Shows the input clearly: your content</li><li>The text lines shorten, like a long chapter turning into short lessons</li><li>Reads more as "documents" than "learning"</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/4-unfolding-page.svg" alt="Unfolding Page mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/4-unfolding-page-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/4-unfolding-page.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/4-unfolding-page-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/4-unfolding-page.svg" alt=""><img src="concepts/4-unfolding-page.svg" alt=""><img src="concepts/4-unfolding-page.svg" alt=""></div><div class="tab"><img src="concepts/4-unfolding-page.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/4-unfolding-page-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge new">New</span>
+      <div class="num">Concept 5</div>
+      <h2>Prism Box</h2>
+      <p>A box that works like a prism: one plain line goes in, four coloured rays come out. One source, many ways to understand it.</p>
+      <ul><li>Says "one concept, more than one way in" in a single image</li><li>Shows the transformation: in on the left, out on the right</li><li>Keeps the isometric box from the current logo</li><li>The rays could animate, each lighting up in turn</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/5-prism-box.svg" alt="Prism Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/5-prism-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/5-prism-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/5-prism-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/5-prism-box.svg" alt=""><img src="concepts/5-prism-box.svg" alt=""><img src="concepts/5-prism-box.svg" alt=""></div><div class="tab"><img src="concepts/5-prism-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/5-prism-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge new">New</span>
+      <div class="num">Concept 6</div>
+      <h2>Ribbon Box</h2>
+      <p>A gift box with its lid lifting. The ribbon unties into a winding path that ends in a spark: learning as a gift, and a journey that starts when you open it.</p>
+      <ul><li>Warm and human: unboxing feels like opening a present</li><li>The ribbon path is the learning journey</li><li>Friendly for schools, NGOs and learners</li><li>The ribbon gets thin at 16 px; a simpler favicon version would help</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/6-ribbon-box.svg" alt="Ribbon Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/6-ribbon-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/6-ribbon-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/6-ribbon-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/6-ribbon-box.svg" alt=""><img src="concepts/6-ribbon-box.svg" alt=""><img src="concepts/6-ribbon-box.svg" alt=""></div><div class="tab"><img src="concepts/6-ribbon-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/6-ribbon-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge box">Box family</span>
+      <div class="num">Concept 7</div>
+      <h2>Line Box</h2>
+      <p>An open box drawn in one clean outline, flaps open, with a glowing dot rising out.</p>
+      <ul><li>Minimal and premium: the most grown-up option</li><li>Single colour, so it prints and embroiders well</li><li>The glow is the idea leaving the box</li><li>Easy to draw in as a line animation</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/7-line-box.svg" alt="Line Box mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/7-line-box-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/7-line-box.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/7-line-box-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/7-line-box.svg" alt=""><img src="concepts/7-line-box.svg" alt=""><img src="concepts/7-line-box.svg" alt=""></div><div class="tab"><img src="concepts/7-line-box.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/7-line-box-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge box">Box family</span>
+      <div class="num">Concept 8</div>
+      <h2>Step Boxes</h2>
+      <p>Three boxes rising like stairs; the tallest one opens into a spark. Small lessons that build up.</p>
+      <ul><li>Shows micro-learning and progress at a glance</li><li>Each box can stand for a module</li><li>Bright and energetic for learners</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/8-step-boxes.svg" alt="Step Boxes mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/8-step-boxes-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/8-step-boxes.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/8-step-boxes-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/8-step-boxes.svg" alt=""><img src="concepts/8-step-boxes.svg" alt=""><img src="concepts/8-step-boxes.svg" alt=""></div><div class="tab"><img src="concepts/8-step-boxes.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/8-step-boxes-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge box">Box family</span>
+      <div class="num">Concept 9</div>
+      <h2>Unfolded Net</h2>
+      <p>The box opened flat into its six faces, the lid still lifting: literally unboxed.</p>
+      <ul><li>Strong geometric shape, unlike any other edtech mark</li><li>Six faces, many colours: many ways in</li><li>The lifting lid gives it movement</li><li>Reads as a cross at tiny sizes</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/9-unfolded-net.svg" alt="Unfolded Net mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/9-unfolded-net-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/9-unfolded-net.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/9-unfolded-net-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/9-unfolded-net.svg" alt=""><img src="concepts/9-unfolded-net.svg" alt=""><img src="concepts/9-unfolded-net.svg" alt=""></div><div class="tab"><img src="concepts/9-unfolded-net.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/9-unfolded-net-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+
+  <section class="concept">
+    <div class="meta">
+      <span class="badge box">Box family</span>
+      <div class="num">Concept 10</div>
+      <h2>Box Buddy</h2>
+      <p>A friendly box with its lid tipped like a cap, looking up at an idea.</p>
+      <ul><li>A logo and a mascot in one</li><li>Warm for children, schools and NGOs</li><li>Could replace the tutor avatar in the app</li><li>Less serious for enterprise buyers</li></ul>
+    </div>
+    <div class="uses">
+      <div class="tile light"><small>On light</small><img class="big" src="concepts/10-box-buddy.svg" alt="Box Buddy mark"></div>
+      <div class="tile dark"><small>On dark</small><img class="big" src="concepts/10-box-buddy-dark.svg" alt=""></div>
+      <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/10-box-buddy.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/10-box-buddy-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/10-box-buddy.svg" alt=""><img src="concepts/10-box-buddy.svg" alt=""><img src="concepts/10-box-buddy.svg" alt=""></div><div class="tab"><img src="concepts/10-box-buddy.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/10-box-buddy-dark.svg" alt=""></div></div>
+    </div>
+  </section>
+</div>
+</body>
+</html>

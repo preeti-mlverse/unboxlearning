@@ -1,0 +1,251 @@
+<title>Learnwise Pipeline Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column with wide tables that scroll in their own frames; pipeline drawn as two lanes (author side, learner side). */
+:root {
+  --bg: #F7F6FC; --surface: #FFFFFF; --ink: #1B1147; --muted: #5E5880; --line: #E2DEF3;
+  --violet: #4B32C8; --lav: #ECE9FC; --coral: #C24A37; --coral-soft: #FCEBE7; --mustard: #8A6200; --mustard-soft: #FBF1D6;
+  --aqua: #1F6E78; --aqua-soft: #E1F2F4;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #120C2E; --surface: #1C1545; --ink: #F1EEFF; --muted: #AFA8D6; --line: #332A6B;
+  --violet: #A999FF; --lav: #2A2160; --coral: #FF9A86; --coral-soft: #3A1D22; --mustard: #F1C24E; --mustard-soft: #342A10;
+  --aqua: #8FD3DC; --aqua-soft: #10323A; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #120C2E; --surface: #1C1545; --ink: #F1EEFF; --muted: #AFA8D6; --line: #332A6B;
+  --violet: #A999FF; --lav: #2A2160; --coral: #FF9A86; --coral-soft: #3A1D22; --mustard: #F1C24E; --mustard-soft: #342A10;
+  --aqua: #8FD3DC; --aqua-soft: #10323A; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 80px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 26px; font-weight: 800; margin-top: 56px; letter-spacing: -0.01em; }
+h3 { font-size: 18px; font-weight: 600; }
+p { max-width: 68ch; margin: 10px 0; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+.lede { font-size: 18px; color: var(--muted); max-width: 64ch; }
+a { color: var(--violet); }
+code, .mono { font-family: var(--mono); font-size: .92em; }
+.answer { background: var(--surface); border: 2px solid var(--violet); border-radius: 16px; padding: 20px 22px; margin-top: 26px; display: grid; gap: 8px; }
+.answer p { margin: 0; }
+.answer strong { color: var(--violet); }
+/* pipeline lanes */
+.lanes { display: grid; gap: 14px; margin-top: 20px; }
+.lane { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.lane-h { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; }
+.node { flex: 1 1 120px; min-width: 0; border-radius: 10px; padding: 9px 11px; background: var(--bg); border: 1px solid var(--line); font-size: 14px; }
+.node b { display: block; font-size: 14px; }
+.node span { font-size: 12px; color: var(--muted); }
+.node.built { border-left: 4px solid var(--aqua); } .node.thin { border-left: 4px solid var(--mustard); } .node.missing { border-left: 4px solid var(--coral); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+/* tables */
+.tbl { overflow-x: auto; margin-top: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg); position: sticky; top: 0; }
+tr:last-child td { border-bottom: none; }
+td.num, .num { font-variant-numeric: tabular-nums; font-family: var(--mono); white-space: nowrap; }
+.pill { display: inline-block; font: 500 11px var(--mono); padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.pill.built, .pill.use { background: var(--aqua-soft); color: var(--aqua); }
+.pill.thin, .pill.try { background: var(--mustard-soft); color: var(--mustard); }
+.pill.missing, .pill.avoid { background: var(--coral-soft); color: var(--coral); }
+.pill.free { background: var(--lav); color: var(--violet); }
+/* who builds */
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+.col { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.col h3 { margin-bottom: 8px; }
+.col ul { margin: 0; padding-left: 18px; font-size: 14px; } .col li { margin: 4px 0; }
+.col .tag { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* cost bars */
+.bars { display: grid; gap: 8px; margin-top: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.bar { display: grid; grid-template-columns: 170px 1fr 64px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .track { height: 12px; background: var(--lav); border-radius: 6px; overflow: hidden; }
+.bar .fill { height: 100%; background: var(--violet); border-radius: 6px; }
+.bar .fill.mini { background: var(--aqua); }
+.bar .v { text-align: right; }
+.note { font-size: 13px; color: var(--muted); }
+/* phases */
+.phases { display: grid; gap: 12px; margin-top: 18px; }
+.phase { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.phase .n { font: 800 26px var(--display); color: var(--violet); }
+.phase .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
+.phase ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; } .phase li { margin: 3px 0; }
+.phase .exit { font-size: 14px; margin-top: 8px; } .phase .exit b { color: var(--violet); }
+.decisions { counter-reset: d; list-style: none; padding: 0; display: grid; gap: 10px; margin-top: 16px; }
+.decisions li { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 50px; position: relative; }
+.decisions li::before { counter-increment: d; content: counter(d); position: absolute; left: 14px; top: 12px; width: 24px; height: 24px; border-radius: 50%; background: var(--violet); color: var(--surface); font: 700 13px/24px var(--body); text-align: center; }
+@media (max-width: 720px) { .cols { grid-template-columns: 1fr; } .bar { grid-template-columns: 110px 1fr 56px; } .phase { grid-template-columns: 1fr; } }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Learnwise · planning · 29 Sep 2026</div>
+  <h1>Pipeline plan: reach AstraXR level, then differentiate</h1>
+  <p class="lede">What the content pipeline is made of, what is built, what a coding agent can and cannot do, which open-source projects to use, and how to build it in the right order on a $3 OpenAI budget.</p>
+
+  <div class="answer">
+    <p><strong>Short answer:</strong> no, export should not come first. It is the last stage of the pipeline and adds nothing to learning quality.</p>
+    <p>Build in this order. First, a cheap way to test. Then the input side (reading content well). Then the quality and cost of generation. Then the learner experience. Distribution (export, marketplace) comes last.</p>
+    <p>Most of the early work uses free, local open-source tools. Only phases 2 and 3 spend OpenAI credit, about $1.50 in total. The rest of the $3 stays in reserve for test courses.</p>
+  </div>
+
+  <h2>1. The pipeline and where we stand</h2>
+  <p>AstraXR doesn't publish its internals, so this map is built from its public feature list and matched against what already runs in <span class="mono">F:\platform_content</span>. The work falls into two halves: turning content into a course, then delivering it to learners.</p>
+  <div class="lanes">
+    <div class="lane">
+      <div class="lane-h">Author side · content → course</div>
+      <div class="flow">
+        <div class="node thin"><b>Ingest</b><span>files, links, video → text, tables, figures</span></div>
+        <div class="node built"><b>Index</b><span>sections, search, embeddings</span></div>
+        <div class="node thin"><b>Understand</b><span>content type, concepts, prerequisites</span></div>
+        <div class="node built"><b>Design</b><span>goal + audience → outline</span></div>
+        <div class="node built"><b>Generate</b><span>cards, games, flashcards</span></div>
+        <div class="node built"><b>Quality</b><span>rules, reading level, fact-check</span></div>
+        <div class="node thin"><b>Media</b><span>pictures, diagrams, voice, avatar, video</span></div>
+        <div class="node built"><b>Studio</b><span>review and edit</span></div>
+      </div>
+    </div>
+    <div class="lane">
+      <div class="lane-h">Learner side · course → learning</div>
+      <div class="flow">
+        <div class="node built"><b>Player + tutor</b><span>journey, cards, games, chat</span></div>
+        <div class="node thin"><b>Adaptivity</b><span>mastery, spaced review</span></div>
+        <div class="node thin"><b>Analytics</b><span>progress, insights</span></div>
+        <div class="node missing"><b>Language lab</b><span>listen, speak, read, write</span></div>
+        <div class="node missing"><b>Distribution</b><span>access levels, SCORM/cmi5/HTML5, marketplace</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="legend"><span><i style="background:var(--aqua)"></i>Built and working</span><span><i style="background:var(--mustard)"></i>Works, needs strengthening</span><span><i style="background:var(--coral)"></i>Missing</span></div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Component</th><th>AstraXR feature</th><th>Our state</th><th>AI cost when it runs</th><th>Open-source to use</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ingest</b></td><td>Upload any book or file</td><td><span class="pill thin">thin</span> 11 formats; weak on scanned pages, maths, two-column layouts</td><td>Free, except scanned pages (vision model)</td><td>docling, trafilatura, faster-whisper, yt-dlp</td></tr>
+      <tr><td><b>Index</b></td><td>–</td><td><span class="pill built">built</span> SQLite, keyword + meaning search</td><td>Embeddings, tiny</td><td>fastembed (local embeddings, free)</td></tr>
+      <tr><td><b>Understand</b></td><td>AI analyses content</td><td><span class="pill thin">thin</span> content profile and concept graph; weak links between prerequisites</td><td>Medium (graph uses the top model)</td><td>Ideas from LightRAG; not a full swap</td></tr>
+      <tr><td><b>Design</b></td><td>One-click course generation</td><td><span class="pill built">built</span> editable outline, one-click option</td><td>Small</td><td>–</td></tr>
+      <tr><td><b>Generate</b></td><td>Micro-modules</td><td><span class="pill built">built</span> 12 card kinds, 8 games</td><td><b>Largest cost</b></td><td>DSPy later, to tune prompts</td></tr>
+      <tr><td><b>Quality</b></td><td>not public</td><td><span class="pill built">built</span> rule checks, one repair round, fact-check</td><td><b>Second largest</b> (repair round)</td><td>promptfoo, for free rule-based regression tests</td></tr>
+      <tr><td><b>Media: pictures, diagrams</b></td><td>Visualise book content</td><td><span class="pill thin">thin</span> made while the course is built; learners can't ask for more</td><td>Pictures paid; diagrams free</td><td>Mermaid, Excalidraw</td></tr>
+      <tr><td><b>Media: voice, avatar</b></td><td>AI avatar assistant</td><td><span class="pill thin">thin</span> narration works; avatar is a still image</td><td>Voice paid today</td><td>TalkingHead + Kokoro (free, runs on a laptop CPU)</td></tr>
+      <tr><td><b>Media: video lessons</b></td><td>AI video</td><td><span class="pill missing">missing</span> only the older narrated explainer</td><td>Free if rendered from existing cards</td><td>Motion Canvas or Manim</td></tr>
+      <tr><td><b>Studio</b></td><td>Create and edit courses</td><td><span class="pill built">built</span></td><td>Only when a card is rewritten</td><td>–</td></tr>
+      <tr><td><b>Player + tutor</b></td><td>Personalised journeys</td><td><span class="pill built">built</span></td><td>Per tutor message</td><td>–</td></tr>
+      <tr><td><b>Adaptivity</b></td><td>–</td><td><span class="pill thin">thin</span> simple mastery estimate and fixed review intervals</td><td>Free</td><td>py-fsrs, pyBKT, py-irt</td></tr>
+      <tr><td><b>Analytics</b></td><td>AI study analytics</td><td><span class="pill thin">thin</span> data is collected; no dashboards or insights yet</td><td>Small (insight text)</td><td>Plain SQL + charts</td></tr>
+      <tr><td><b>Language lab</b></td><td>Language Lab (listen, speak, read, write)</td><td><span class="pill missing">missing</span></td><td>Speech scoring</td><td>faster-whisper; pronunciation scoring needs a model or a paid API</td></tr>
+      <tr><td><b>Distribution</b></td><td>Publish, SCORM/HTML5/cmi5, paid courses</td><td><span class="pill thin">thin</span> learner link, QTI and bundle export only</td><td>Free</td><td>cmi5 spec (Apache); write our own small SCORM wrapper</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Shared services are already built: a model gateway that can switch provider, background jobs, caching and a usage log. Still missing: a hard spending cap per run.</p>
+
+  <h2>2. Agents: in the product and in the building</h2>
+  <p><b>Inside the product</b>, the pipeline should stay a fixed workflow: each step calls the model once, with a set structure for the output. It should not use autonomous agents that decide their own steps. A fixed workflow is cheaper, gives the same result each time, and is easy to test. The only place agent-like behaviour earns its cost is the learner's tutor chat.</p>
+  <p><b>For building it</b>, the work splits three ways:</p>
+  <div class="cols">
+    <div class="col"><div class="tag">A coding agent builds it</div><h3>Nearly all the software</h3>
+      <ul><li>Wiring in docling, Whisper, fastembed and FSRS</li><li>Pipeline stages, caching, cost caps</li><li>Card player, games, interactive widgets</li><li>Avatar integration and lip-sync</li><li>Analytics dashboards</li><li>SCORM, cmi5 and HTML5 export</li><li>Tests and quality benchmarks</li></ul></div>
+    <div class="col"><div class="tag">The agent builds it, you decide or supply</div><h3>Taste and inputs</h3>
+      <ul><li>Avatar look and voice</li><li>Your character illustrations</li><li>4–6 real sample materials from target customers</li><li>What "good enough" looks like: approve 2 reference courses</li><li>Target learning platform (Moodle, TalentLMS …)</li><li>Plans, limits and prices</li></ul></div>
+    <div class="col"><div class="tag">Outside coding</div><h3>People, accounts, legal</h3>
+      <ul><li>Subject experts spot-checking courses</li><li>Real learners trying it</li><li>Payment account and verification (Stripe or Razorpay)</li><li>Terms, privacy, rights to uploaded content</li><li>Hosting account; OpenAI top-up</li><li>A free SCORM Cloud account for export testing</li></ul></div>
+  </div>
+
+  <h2>3. Open-source projects, checked 29 Sep 2026</h2>
+  <p>Each project was checked on GitHub for licence, recent activity and whether it is archived. Licence matters because Learnwise is a commercial product. Projects marked <span class="pill avoid">avoid</span> either restrict commercial use, need a graphics card this laptop doesn't have, or are no longer maintained.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Project</th><th>For</th><th>Licence</th><th class="num">Stars</th><th>Last update</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>docling</td><td>PDF, Word, slides: layout, tables, equations, OCR</td><td>MIT</td><td class="num">68,130</td><td class="num">2026-09-28</td><td><span class="pill use">use</span> main parser; runs on CPU</td></tr>
+      <tr><td>markitdown</td><td>Quick conversion of any Office file</td><td>MIT</td><td class="num">187,447</td><td class="num">2026-09-21</td><td><span class="pill try">try</span> fallback</td></tr>
+      <tr><td>marker</td><td>High-accuracy PDF to text</td><td>Apache-2.0 code; model weights under their own licence</td><td class="num">40,058</td><td class="num">2026-09-13</td><td><span class="pill avoid">avoid</span> weights limit commercial use; wants a GPU</td></tr>
+      <tr><td>MinerU</td><td>Scanned and maths-heavy PDFs</td><td>custom licence</td><td class="num">80,781</td><td class="num">2026-09-28</td><td><span class="pill avoid">avoid</span> until the licence is reviewed</td></tr>
+      <tr><td>trafilatura</td><td>Clean article text from web pages</td><td>Apache-2.0</td><td class="num">6,882</td><td class="num">2026-09-25</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>faster-whisper</td><td>Speech to text, locally</td><td>MIT</td><td class="num">25,613</td><td class="num">2025-11-19</td><td><span class="pill use">use</span> small model on CPU</td></tr>
+      <tr><td>yt-dlp</td><td>Audio from videos without captions</td><td>Unlicense</td><td class="num">194,131</td><td class="num">2026-09-27</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>fastembed</td><td>Local embeddings, no API cost</td><td>Apache-2.0</td><td class="num">3,223</td><td class="num">2026-09-28</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>LightRAG / GraphRAG</td><td>Knowledge-graph building</td><td>MIT</td><td class="num">39,902 / 36,141</td><td class="num">2026-09-28</td><td><span class="pill try">borrow ideas</span> full runs cost too many model calls</td></tr>
+      <tr><td>promptfoo</td><td>Regression tests for generation quality</td><td>MIT</td><td class="num">25,535</td><td class="num">2026-09-28</td><td><span class="pill use">use</span> free rule checks only</td></tr>
+      <tr><td>DSPy</td><td>Automatic prompt tuning</td><td>MIT</td><td class="num">38,403</td><td class="num">2026-09-28</td><td><span class="pill try">later</span> tuning runs cost credit</td></tr>
+      <tr><td>py-fsrs</td><td>Modern spaced repetition</td><td>MIT</td><td class="num">498</td><td class="num">2026-08-09</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>pyBKT</td><td>Knowledge tracing (mastery)</td><td>MIT</td><td class="num">280</td><td class="num">2026-08-05</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>py-irt</td><td>Question difficulty</td><td>MIT</td><td class="num">172</td><td class="num">2026-09-01</td><td><span class="pill try">try</span> once there is learner data</td></tr>
+      <tr><td>halflife-regression (Duolingo)</td><td>Forgetting model</td><td>MIT</td><td class="num">580</td><td class="num">2024-04-20</td><td><span class="pill try">reference</span> FSRS supersedes it</td></tr>
+      <tr><td>TalkingHead</td><td>3D talking avatar with lip-sync, in the browser</td><td>MIT</td><td class="num">1,571</td><td class="num">2026-09-25</td><td><span class="pill use">use</span></td></tr>
+      <tr><td>Kokoro</td><td>Natural text-to-speech on CPU</td><td>Apache-2.0</td><td class="num">9,061</td><td class="num">2025-08-06</td><td><span class="pill use">use</span> free voice</td></tr>
+      <tr><td>Piper</td><td>Text-to-speech</td><td>archived; successor is GPL-3.0</td><td class="num">11,290</td><td class="num">2025-08-26</td><td><span class="pill avoid">avoid</span></td></tr>
+      <tr><td>LivePortrait / SadTalker</td><td>Photo to talking video</td><td>unclear</td><td class="num">19,127 / 14,107</td><td class="num">2026-06 / 2024-06</td><td><span class="pill avoid">avoid</span> GPU needed, unclear licence</td></tr>
+      <tr><td>Motion Canvas</td><td>Animated lesson videos from code</td><td>MIT</td><td class="num">19,194</td><td class="num">2026-07-02</td><td><span class="pill use">use</span> for video lessons</td></tr>
+      <tr><td>Manim</td><td>Maths and science animation</td><td>MIT</td><td class="num">41,112</td><td class="num">2026-09-27</td><td><span class="pill try">try</span> STEM visuals</td></tr>
+      <tr><td>Remotion</td><td>Video from React</td><td>company licence</td><td class="num">60,922</td><td class="num">2026-09-28</td><td><span class="pill avoid">avoid</span> companies need a paid licence</td></tr>
+      <tr><td>Mafs / JSXGraph</td><td>Draggable maths graphs (Brilliant-style)</td><td>MIT / LGPL-3.0</td><td class="num">3,437 / 1,460</td><td class="num">2025-03 / 2026-09</td><td><span class="pill use">use</span> in the Brilliant phase</td></tr>
+      <tr><td>Pyodide / Sandpack / Blockly</td><td>Runnable code exercises</td><td>MPL-2.0 / Apache-2.0 / Apache-2.0</td><td class="num">14,864 / 6,246 / 13,575</td><td class="num">2026</td><td><span class="pill use">use</span> in the Brilliant phase</td></tr>
+      <tr><td>h5p-standalone</td><td>Plays H5P interactive content</td><td>MIT</td><td class="num">346</td><td class="num">2026-03-24</td><td><span class="pill try">try</span> import existing H5P packages</td></tr>
+      <tr><td>pipwerks SCORM wrapper</td><td>SCORM communication</td><td>no licence file</td><td class="num">391</td><td class="num">2023-05-13</td><td><span class="pill avoid">avoid</span> write our own (about 150 lines)</td></tr>
+      <tr><td>cmi5 spec</td><td>cmi5 packaging and statements</td><td>Apache-2.0</td><td class="num">189</td><td class="num">2024-09-06</td><td><span class="pill use">use</span> as the reference</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>4. Making $3 go far</h2>
+  <p>Measured on the water-cycle test course built today (4 modules, 48 cards). Text generation cost about <b>$0.42</b>; six illustrations added a few cents more. Nearly all of it is output from the top model:</p>
+  <div class="bars" role="img" aria-label="Cost per stage for one course">
+    <div class="bar"><span>Write modules</span><span class="track"><span class="fill" style="width:100%;display:block"></span></span><span class="v num">$0.17</span></div>
+    <div class="bar"><span>Repair round</span><span class="track"><span class="fill" style="width:69%;display:block"></span></span><span class="v num">$0.12</span></div>
+    <div class="bar"><span>Knowledge graph</span><span class="track"><span class="fill" style="width:30%;display:block"></span></span><span class="v num">$0.05</span></div>
+    <div class="bar"><span>Extract ideas</span><span class="track"><span class="fill mini" style="width:15%;display:block"></span></span><span class="v num">$0.03</span></div>
+    <div class="bar"><span>Profile content</span><span class="track"><span class="fill" style="width:14%;display:block"></span></span><span class="v num">$0.02</span></div>
+    <div class="bar"><span>Outline</span><span class="track"><span class="fill" style="width:9%;display:block"></span></span><span class="v num">$0.02</span></div>
+    <div class="bar"><span>Fact-check</span><span class="track"><span class="fill mini" style="width:5%;display:block"></span></span><span class="v num">$0.01</span></div>
+    <div class="note">Violet: top model (gpt-5). Aqua: smaller model (gpt-5-mini). Illustrations use gpt-image-1-mini at low quality and aren't shown.</div>
+  </div>
+  <p><b>Four moves bring a course to roughly $0.08–0.12.</b> At that price, $3 covers 25–30 test courses instead of about 7.</p>
+  <ul>
+    <li><b>Write with the smaller model.</b> gpt-5-mini costs a fifth of gpt-5 on output. Test it first on one module side by side, for about $0.05.</li>
+    <li><b>Cut the repair round.</b> Three of the four modules needed one. Most failures are simple rule breaks (too long, reading level too high), and a tighter first prompt or a code fix can prevent them.</li>
+    <li><b>Cache every stage.</b> Re-running one stage should never redo the stages before it.</li>
+    <li><b>Develop the interface for free.</b> Record real responses once and replay them while building screens.</li>
+  </ul>
+  <p>Also free: local embeddings, docling, Whisper, Kokoro voice and diagrams drawn from data. A free provider for development is an option too: Google's Gemini API has a rate-limited free tier, and our gateway can add it. Check its data terms first, and use it only for test material, never customer content.</p>
+
+  <h2>5. Build order</h2>
+  <div class="phases">
+    <div class="phase"><div class="n">0</div><div><h3>Foundations for cheap testing</h3>
+      <div class="meta"><span class="pill free">$0</span><span class="pill try">2 days</span></div>
+      <ul><li>Hard spending cap per run in the model gateway, and a cost meter on each course</li><li>A fixed test set of 6 short sources: a textbook PDF, a scanned page, a slide deck, a docs page, a YouTube video and a spreadsheet</li><li>Stage-by-stage caching, and a record-and-replay mode for interface work</li></ul>
+      <div class="exit"><b>Done when:</b> the whole test set runs in replay mode for $0, and a real run stops at the cap.</div></div></div>
+    <div class="phase"><div class="n">1</div><div><h3>Read content properly: ingestion bake-off</h3>
+      <div class="meta"><span class="pill free">$0</span><span class="pill try">3 days</span></div>
+      <ul><li>docling vs our parser vs markitdown on the test set; trafilatura vs our web reader</li><li>faster-whisper plus yt-dlp for videos without captions; fastembed in place of paid embeddings</li><li>Keep whichever wins on each format, with the others as fallback</li></ul>
+      <div class="exit"><b>Done when:</b> a side-by-side report shows the parsed output per file, and the scanned and maths pages read correctly.</div></div></div>
+    <div class="phase"><div class="n">2</div><div><h3>Better courses for less</h3>
+      <div class="meta"><span class="pill thin">≈ $1</span><span class="pill try">3 days</span></div>
+      <ul><li>Side-by-side test of gpt-5 vs gpt-5-mini on the same module; switch if quality holds</li><li>Stronger prerequisite links in the concept graph; fewer repair rounds</li><li>promptfoo rule tests on every card: length, reading level, answer key, source evidence</li></ul>
+      <div class="exit"><b>Done when:</b> a course costs ≤ $0.12 and the rule tests pass on the test set.</div></div></div>
+    <div class="phase"><div class="n">3</div><div><h3>AstraXR-level learner experience</h3>
+      <div class="meta"><span class="pill thin">≈ $0.50</span><span class="pill try">8 days</span></div>
+      <ul><li>3D talking tutor: TalkingHead + Kokoro voice, both free</li><li>"Show me" visuals on any card: diagrams are free, pictures are capped per day</li><li>Progress page and creator dashboard with insights; FSRS reviews and pyBKT mastery</li><li>Module video lessons rendered from existing cards with Motion Canvas</li></ul>
+      <div class="exit"><b>Done when:</b> one course can be learned start to finish with the avatar, reviews and video, and the dashboards show real attempts.</div></div></div>
+    <div class="phase"><div class="n">4</div><div><h3>Distribution</h3>
+      <div class="meta"><span class="pill free">$0</span><span class="pill try">5 days</span></div>
+      <ul><li>Access levels: private, restricted, public catalogue</li><li>SCORM 1.2/2004, cmi5 and HTML5 export, tested in SCORM Cloud and your target platform</li><li>Groundwork for the marketplace (payments come later)</li></ul>
+      <div class="exit"><b>Done when:</b> an exported course imports into your target learning platform and reports score and completion.</div></div></div>
+    <div class="phase"><div class="n">5+</div><div><h3>Differentiation</h3>
+      <div class="meta"><span class="pill try">after parity</span></div>
+      <ul><li><b>Duolingo layer:</b> many question variants per concept, a difficulty model, adaptive sessions, the learning path, leagues and review of past mistakes</li><li><b>Brilliant layer:</b> the learner tries before being told, using a library of draggable, sliding interactives that the engine configures for each concept</li><li>Language lab, then the full marketplace</li></ul></div></div>
+  </div>
+
+  <h2>6. Decisions needed from you</h2>
+  <ol class="decisions">
+    <li><b>Smaller model for writing.</b> May we switch course writing to gpt-5-mini if the side-by-side test shows the same quality? It is the biggest saving.</li>
+    <li><b>Free test provider.</b> May we add Gemini's free tier for development, using test material only?</li>
+    <li><b>Test material.</b> Can you share 4–6 real files your target customers would upload, to use as the fixed test set?</li>
+    <li><b>Avatar style.</b> Realistic 3D person, stylised 3D character, or your own illustrations animated in 2D?</li>
+    <li><b>Target learning platform.</b> Which one do your first customers use? Moodle, TalentLMS, Cornerstone or another?</li>
+  </ol>
+</div>

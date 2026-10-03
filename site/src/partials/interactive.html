@@ -1,0 +1,121 @@
+<section class="sec soft" id="interactive">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow v">Learning you can touch</p>
+      <h2>Don't just tell me.<br><span class="hl-c">Let me try it.</span></h2>
+      <p class="lede">UnboxEd picks the interaction that fits the concept. Six live ones below: go on, poke them.</p>
+    </div>
+    <div class="lab-tabs" role="tablist" aria-label="Choose a hands-on example">
+      <button type="button" role="tab" data-go="0" style="--lc:#4B32C8">Physics</button>
+      <button type="button" role="tab" data-go="1" style="--lc:#1E9E78">Biology</button>
+      <button type="button" role="tab" data-go="2" style="--lc:#D9A300">Economics</button>
+      <button type="button" role="tab" data-go="3" style="--lc:#E65F45">Spanish</button>
+      <button type="button" role="tab" data-go="4" style="--lc:#6B55F0">Business</button>
+      <button type="button" role="tab" data-go="5" style="--lc:#1F6E78">AI</button>
+    </div>
+    <div class="deck-wrap">
+    <div class="labs deck">
+
+      <article class="lab" data-lab="physics">
+        <span class="subj c-v">Physics</span>
+        <h3>Change the force. Watch acceleration respond.</h3>
+        <div class="lab-stage track" aria-hidden="true"><div class="cart"><span>2 kg</span></div><div class="push"></div></div>
+        <label class="lab-ctl">Push <input type="range" min="1" max="10" value="4" step="1" aria-label="Force in newtons"><output>4 N</output></label>
+        <p class="lab-read" aria-live="polite">a = F ÷ m = 4 ÷ 2 = <b>2 m/s²</b></p>
+        <span class="lab-hint">drag slider →</span>
+      </article>
+
+      <article class="lab" data-lab="biology">
+        <span class="subj c-g">Biology</span>
+        <h3>Build the cell before learning its parts.</h3>
+        <div class="lab-stage cell-stage">
+          <svg class="cell" viewBox="0 0 220 140" role="img" aria-label="An animal cell you can build">
+            <ellipse cx="110" cy="70" rx="102" ry="62" fill="#E8F6F2" stroke="#2E9C83" stroke-width="3" stroke-dasharray="7 6" class="membrane"/>
+            <g class="org org-nucleus" opacity="0"><circle cx="110" cy="68" r="24" fill="#4B32C8"/><circle cx="104" cy="62" r="7" fill="#8C78FF"/></g>
+            <g class="org org-mito" opacity="0"><ellipse cx="52" cy="78" rx="24" ry="11" fill="#E65F45"/><path d="M34 78c5-7 9 7 14 0s9 7 14 0 9 7 12 0" fill="none" stroke="#fff" stroke-width="2"/></g>
+            <g class="org org-ribo" opacity="0"><circle cx="160" cy="44" r="4" fill="#1B164B"/><circle cx="172" cy="56" r="4" fill="#1B164B"/><circle cx="156" cy="96" r="4" fill="#1B164B"/><circle cx="176" cy="84" r="4" fill="#1B164B"/><circle cx="148" cy="70" r="4" fill="#1B164B"/></g>
+          </svg>
+        </div>
+        <div class="org-chips" role="group" aria-label="Organelles to place">
+          <button type="button" draggable="true" data-org="membrane">Membrane</button>
+          <button type="button" draggable="true" data-org="nucleus">Nucleus</button>
+          <button type="button" draggable="true" data-org="mito">Mitochondria</button>
+          <button type="button" draggable="true" data-org="ribo">Ribosomes</button>
+        </div>
+        <p class="lab-read" aria-live="polite">Tap or drag a part into the cell.</p>
+        <span class="lab-hint">drag organelles →</span>
+      </article>
+
+      <article class="lab" data-lab="economics">
+        <span class="subj c-y">Economics</span>
+        <h3>Move the price. Watch demand change.</h3>
+        <div class="lab-stage">
+          <svg class="demand" viewBox="0 0 240 130" role="img" aria-label="Demand curve: as price rises, quantity bought falls">
+            <path d="M30 10V110H230" fill="none" stroke="currentColor" stroke-width="2" opacity=".35"/>
+            <path d="M40 18 L220 104" fill="none" stroke="#F2B900" stroke-width="4" stroke-linecap="round"/>
+            <line class="dg-v" x1="0" y1="0" x2="0" y2="110" stroke="#E65F45" stroke-dasharray="3 4"/>
+            <line class="dg-h" x1="30" y1="0" x2="0" y2="0" stroke="#E65F45" stroke-dasharray="3 4"/>
+            <circle class="dg-pt" r="7" fill="#E65F45" stroke="#fff" stroke-width="2"/>
+            <text x="6" y="16" font-size="10" fill="currentColor" opacity=".7">price</text>
+            <text x="196" y="124" font-size="10" fill="currentColor" opacity=".7">cups sold</text>
+          </svg>
+        </div>
+        <label class="lab-ctl">Price <input type="range" min="10" max="90" value="40" step="5" aria-label="Price of a cup of chai in rupees"><output>₹40</output></label>
+        <p class="lab-read" aria-live="polite">At ₹40 a cup, the stall sells <b>68 cups</b> a day.</p>
+        <span class="lab-hint">explore graph →</span>
+      </article>
+
+      <article class="lab" data-lab="language">
+        <span class="subj c-c">Language · Spanish</span>
+        <h3>Order food from an AI shopkeeper.</h3>
+        <div class="lab-stage chat-mini" aria-live="polite">
+          <p class="bub them">¡Hola! ¿Qué te pongo? <small>Hi! What can I get you?</small></p>
+        </div>
+        <div class="lab-choices">
+          <button type="button" data-say="0">Un café con leche, por favor.</button>
+          <button type="button" data-say="1">¿Qué me recomienda?</button>
+        </div>
+        <span class="lab-hint">start conversation →</span>
+      </article>
+
+      <article class="lab" data-lab="business">
+        <span class="subj c-v">Business</span>
+        <h3>Handle an unhappy customer.</h3>
+        <div class="lab-stage chat-mini">
+          <p class="bub them">"I've waited 40 minutes and my order is still wrong."</p>
+        </div>
+        <div class="lab-choices" aria-label="Choose your response">
+          <button type="button" data-q="good">"I'm sorry. I'll fix it now and take the delivery fee off."</button>
+          <button type="button" data-q="mid">"Our kitchen is really busy today."</button>
+          <button type="button" data-q="bad">"Please calm down."</button>
+        </div>
+        <p class="lab-read" aria-live="polite"></p>
+        <span class="lab-hint">choose your response →</span>
+      </article>
+
+      <article class="lab" data-lab="ai">
+        <span class="subj c-a">AI / Technology</span>
+        <h3>Change model inputs. See predictions shift.</h3>
+        <div class="lab-stage spam">
+          <p class="mail-mock"><b>Subject:</b> <span class="subj-line">Your invoice for March</span></p>
+          <div class="meter"><i></i></div>
+          <p class="meter-lbl">Spam probability <b>12%</b></p>
+        </div>
+        <label class="lab-ctl">Links <input type="range" min="0" max="10" value="1" aria-label="Number of links in the email"><output>1</output></label>
+        <div class="toggles">
+          <label><input type="checkbox" data-f="free"> "FREE!!!" in subject</label>
+          <label><input type="checkbox" data-f="stranger"> Unknown sender</label>
+        </div>
+        <span class="lab-hint">experiment →</span>
+      </article>
+
+    </div>
+    <div class="deck-nav">
+      <button type="button" class="deck-btn" data-step="-1" aria-label="Previous example">←</button>
+      <span class="deck-count" aria-live="polite"><b>01</b> / 06</span>
+      <button type="button" class="deck-btn" data-step="1" aria-label="Next example">→</button>
+    </div>
+    </div>
+    <p class="statement-line dark-ink">The goal isn't more content.<br>It's <span class="hl-c">better ways to understand it.</span></p>
+  </div>
+</section>

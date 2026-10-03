@@ -1,0 +1,316 @@
+[
+ {
+  "section": [],
+  "title": "Deep Agents overview",
+  "href": "/oss/python/deepagents/overview",
+  "file": "source/md/01_oss_python_deepagents_overview.md"
+ },
+ {
+  "section": [
+   "Get started"
+  ],
+  "title": "Quickstart",
+  "href": "/oss/python/deepagents/quickstart",
+  "file": "source/md/02_oss_python_deepagents_quickstart.md"
+ },
+ {
+  "section": [
+   "Get started"
+  ],
+  "title": "Customize Deep Agents",
+  "href": "/oss/python/deepagents/customization",
+  "file": "source/md/03_oss_python_deepagents_customization.md"
+ },
+ {
+  "section": [
+   "Get started"
+  ],
+  "title": "Models",
+  "href": "/oss/python/deepagents/models",
+  "file": "source/md/04_oss_python_deepagents_models.md"
+ },
+ {
+  "section": [
+   "Get started"
+  ],
+  "title": "Comparison with Claude Agent SDK",
+  "href": "/oss/python/deepagents/comparison",
+  "file": "source/md/05_oss_python_deepagents_comparison.md"
+ },
+ {
+  "section": [
+   "Get started"
+  ],
+  "title": "Changelog",
+  "href": "/oss/python/deepagents/changelog-py",
+  "file": "source/md/06_oss_python_deepagents_changelog-py.md"
+ },
+ {
+  "section": [
+   "Deployment"
+  ],
+  "title": "Managed Deep Agents",
+  "href": "/langsmith/python/managed-deep-agents",
+  "file": "source/md/07_langsmith_python_managed-deep-agents.md"
+ },
+ {
+  "section": [
+   "Deployment"
+  ],
+  "title": "Going to production",
+  "href": "/oss/python/deepagents/going-to-production",
+  "file": "source/md/08_oss_python_deepagents_going-to-production.md"
+ },
+ {
+  "section": [
+   "Deployment",
+   "Going to production"
+  ],
+  "title": "Fault tolerance",
+  "href": "/oss/python/deepagents/fault-tolerance",
+  "file": "source/md/09_oss_python_deepagents_fault-tolerance.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Tools",
+  "href": "/oss/python/deepagents/tools",
+  "file": "source/md/10_oss_python_deepagents_tools.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Backends",
+  "href": "/oss/python/deepagents/backends",
+  "file": "source/md/11_oss_python_deepagents_backends.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Permissions",
+  "href": "/oss/python/deepagents/permissions",
+  "file": "source/md/12_oss_python_deepagents_permissions.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Multimodal inputs and outputs",
+  "href": "/oss/python/deepagents/multimodal",
+  "file": "source/md/13_oss_python_deepagents_multimodal.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Sandboxes",
+  "href": "/oss/python/deepagents/sandboxes",
+  "file": "source/md/14_oss_python_deepagents_sandboxes.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Interpreters",
+  "href": "/oss/python/deepagents/interpreters",
+  "file": "source/md/15_oss_python_deepagents_interpreters.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Event streaming",
+  "href": "/oss/python/deepagents/event-streaming",
+  "file": "source/md/16_oss_python_deepagents_event-streaming.md"
+ },
+ {
+  "section": [
+   "Execution environment"
+  ],
+  "title": "Streaming",
+  "href": "/oss/python/deepagents/streaming",
+  "file": "source/md/17_oss_python_deepagents_streaming.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "Skills",
+  "href": "/oss/python/deepagents/skills",
+  "file": "source/md/18_oss_python_deepagents_skills.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "Memory",
+  "href": "/oss/python/deepagents/memory",
+  "file": "source/md/19_oss_python_deepagents_memory.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "Retrieval",
+  "href": "/oss/python/deepagents/retrieval",
+  "file": "source/md/20_oss_python_deepagents_retrieval.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "Context engineering in Deep Agents",
+  "href": "/oss/python/deepagents/context-engineering",
+  "file": "source/md/21_oss_python_deepagents_context-engineering.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "Profiles",
+  "href": "/oss/python/deepagents/profiles",
+  "file": "source/md/22_oss_python_deepagents_profiles.md"
+ },
+ {
+  "section": [
+   "Context management"
+  ],
+  "title": "OpenWiki",
+  "href": "/oss/python/deepagents/openwiki",
+  "file": "source/md/23_oss_python_deepagents_openwiki.md"
+ },
+ {
+  "section": [
+   "Delegation"
+  ],
+  "title": "Subagents",
+  "href": "/oss/python/deepagents/subagents",
+  "file": "source/md/24_oss_python_deepagents_subagents.md"
+ },
+ {
+  "section": [
+   "Delegation"
+  ],
+  "title": "Dynamic subagents",
+  "href": "/oss/python/deepagents/dynamic-subagents",
+  "file": "source/md/25_oss_python_deepagents_dynamic-subagents.md"
+ },
+ {
+  "section": [
+   "Delegation"
+  ],
+  "title": "Async subagents",
+  "href": "/oss/python/deepagents/async-subagents",
+  "file": "source/md/26_oss_python_deepagents_async-subagents.md"
+ },
+ {
+  "section": [
+   "Steering"
+  ],
+  "title": "Human-in-the-loop",
+  "href": "/oss/python/deepagents/human-in-the-loop",
+  "file": "source/md/27_oss_python_deepagents_human-in-the-loop.md"
+ },
+ {
+  "section": [
+   "Steering"
+  ],
+  "title": "Grading rubrics",
+  "href": "/oss/python/deepagents/rubric",
+  "file": "source/md/28_oss_python_deepagents_rubric.md"
+ },
+ {
+  "section": [
+   "Middleware"
+  ],
+  "title": "Overview",
+  "href": "/oss/python/langchain/middleware/overview",
+  "file": "source/md/29_oss_python_langchain_middleware_overview.md"
+ },
+ {
+  "section": [
+   "Middleware"
+  ],
+  "title": "Prebuilt middleware",
+  "href": "/oss/python/langchain/middleware/built-in",
+  "file": "source/md/30_oss_python_langchain_middleware_built-in.md"
+ },
+ {
+  "section": [
+   "Middleware"
+  ],
+  "title": "Custom middleware",
+  "href": "/oss/python/langchain/middleware/custom",
+  "file": "source/md/31_oss_python_langchain_middleware_custom.md"
+ },
+ {
+  "section": [
+   "Frontend"
+  ],
+  "title": "Overview",
+  "href": "/oss/python/deepagents/frontend/overview",
+  "file": "source/md/32_oss_python_deepagents_frontend_overview.md"
+ },
+ {
+  "section": [
+   "Frontend",
+   "Patterns"
+  ],
+  "title": "Subagent streaming",
+  "href": "/oss/python/deepagents/frontend/subagent-streaming",
+  "file": "source/md/33_oss_python_deepagents_frontend_subagent-streaming.md"
+ },
+ {
+  "section": [
+   "Frontend",
+   "Patterns"
+  ],
+  "title": "Todo list",
+  "href": "/oss/python/deepagents/frontend/todo-list",
+  "file": "source/md/34_oss_python_deepagents_frontend_todo-list.md"
+ },
+ {
+  "section": [
+   "Frontend",
+   "Patterns"
+  ],
+  "title": "Sandbox",
+  "href": "/oss/python/deepagents/frontend/sandbox",
+  "file": "source/md/35_oss_python_deepagents_frontend_sandbox.md"
+ },
+ {
+  "section": [
+   "Protocols"
+  ],
+  "title": "Agent Client Protocol (ACP)",
+  "href": "/oss/python/deepagents/acp",
+  "file": "source/md/36_oss_python_deepagents_acp.md"
+ },
+ {
+  "section": [
+   "Protocols"
+  ],
+  "title": "Model Context Protocol",
+  "href": "/oss/python/deepagents/mcp",
+  "file": "source/md/37_oss_python_deepagents_mcp.md"
+ },
+ {
+  "section": [
+   "Protocols"
+  ],
+  "title": "A2A server",
+  "href": "/oss/python/deepagents/a2a",
+  "file": "source/md/38_oss_python_deepagents_a2a.md"
+ },
+ {
+  "section": [
+   "Protocols"
+  ],
+  "title": "Agent User Interaction Protocol (AG-UI)",
+  "href": "/oss/python/deepagents/ag-ui",
+  "file": "source/md/39_oss_python_deepagents_ag-ui.md"
+ }
+]

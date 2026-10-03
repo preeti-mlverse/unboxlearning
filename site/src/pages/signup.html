@@ -1,0 +1,81 @@
+<!--
+title: Sign up
+description: Create your UnboxEd account as a learner, educator, school, NGO or organization.
+nav: signup
+-->
+<section class="auth">
+  <div class="hex-field"></div>
+  <div class="wrap auth-grid">
+    <aside class="auth-side">
+      <p class="eyebrow">Join UnboxEd</p>
+      <h1>Bring the knowledge. <span class="swash">We'll unbox it.</span></h1>
+      <ul class="auth-list">
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>Turn any chapter, deck or video into a learning experience</li>
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>A tutor learners can talk to, in their language</li>
+        <li><svg width="20" height="20" aria-hidden="true"><use href="#check"/></svg>Free while we're in early access</li>
+      </ul>
+      <p class="auth-switch">Already have an account? <a href="/login/">Log in</a></p>
+    </aside>
+
+    <div class="auth-card">
+      <ol class="auth-steps" aria-label="Sign-up progress">
+        <li class="on" data-s="1"><span>1</span>You</li><li data-s="2"><span>2</span>Details</li><li data-s="3"><span>3</span>Done</li>
+      </ol>
+
+      <form id="signup-form" class="form" novalidate>
+        <fieldset class="step" data-step="1">
+          <legend><h2>Who's signing up?</h2></legend>
+          <div class="roles">
+            <label class="role"><input type="radio" name="role" value="learner" required><span><b>Learner</b><small>I want to learn something</small></span></label>
+            <label class="role"><input type="radio" name="role" value="educator"><span><b>Educator</b><small>I teach or train people</small></span></label>
+            <label class="role"><input type="radio" name="role" value="school"><span><b>School or university</b><small>For our institution</small></span></label>
+            <label class="role"><input type="radio" name="role" value="ngo"><span><b>NGO or public program</b><small>For our learners in the field</small></span></label>
+            <label class="role"><input type="radio" name="role" value="organization"><span><b>Organization</b><small>Training for our team or customers</small></span></label>
+          </div>
+          <p class="field-err" id="err-role" hidden>Choose the option that fits you best.</p>
+          <button class="btn btn-violet" type="button" data-next>Continue →</button>
+        </fieldset>
+
+        <fieldset class="step" data-step="2" hidden>
+          <legend><h2>Your details</h2></legend>
+          <label for="s-name">Full name<input id="s-name" name="name" autocomplete="name" required></label>
+          <div class="two">
+            <label for="s-email">Email<input id="s-email" name="email" type="email" autocomplete="email" required></label>
+            <label for="s-phone">Mobile
+              <span class="phone-in"><span>+91</span><input id="s-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel-national" pattern="[6-9][0-9]{9}" maxlength="10" placeholder="10-digit number"></span>
+            </label>
+          </div>
+          <label for="s-org" id="org-wrap">Organisation<input id="s-org" name="org" autocomplete="organization" placeholder="School, NGO or company name"></label>
+          <label for="s-lang">Language you'd like to learn or teach in
+            <select id="s-lang" name="language">
+              <option value="en">English</option><option value="hi">हिन्दी Hindi</option><option value="ta">தமிழ் Tamil</option><option value="te">తెలుగు Telugu</option>
+              <option value="bn">বাংলা Bengali</option><option value="mr">मराठी Marathi</option><option value="es">Español</option><option value="fr">Français</option><option value="ar">العربية Arabic</option>
+            </select>
+          </label>
+          <label for="s-pass">Create a password
+            <span class="pass-in"><input id="s-pass" name="password" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="show-pass" aria-label="Show password">Show</button></span>
+            <span class="meter-pass" aria-hidden="true"><i></i></span>
+            <small class="hint" id="pass-hint">At least 8 characters. Mix letters and numbers.</small>
+          </label>
+          <label class="check"><input type="checkbox" name="agree" id="s-agree" required> I agree to the <a href="/terms/">Terms</a> and <a href="/privacy/">Privacy policy</a></label>
+          <p class="field-err" id="err-details" hidden></p>
+          <div class="step-actions">
+            <button class="btn-link" type="button" data-back>← Back</button>
+            <button class="btn btn-primary" type="submit">Create my account</button>
+          </div>
+        </fieldset>
+
+        <div class="step done-step" data-step="3" hidden aria-live="polite">
+          <div class="done-badge" aria-hidden="true"><svg width="44" height="44"><use href="#logo"/></svg></div>
+          <h2 id="done-title">You're on the list.</h2>
+          <p id="done-copy">We're opening accounts to early partners in small groups. We'll email you as soon as yours is ready, usually within two working days.</p>
+          <div id="done-send" hidden>
+            <p>One last step: send us your request so we can set up your account.</p>
+            <a class="btn btn-primary" id="done-mail" href="mailto:preeti.agrawal@lightbulblabs.tech">Send my request</a>
+          </div>
+          <div class="hero-cta"><a class="btn btn-violet" href="/demo/">Play the demo while you wait</a></div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,97 @@
+@page { size: A4; margin: 18mm 16mm 20mm 16mm;
+  @bottom-center { content: counter(page); font: 9pt "Segoe UI", Arial, sans-serif; color: #888; }
+  @top-right { content: "Deep Agents · LangChain Docs"; font: 8pt "Segoe UI", Arial, sans-serif; color: #aaa; }
+}
+@page :first { @bottom-center { content: none; } @top-right { content: none; } }
+
+:root { --ink: #1b1f24; --muted: #5b6470; --line: #e3e6ea; --accent: #1c3c3c; --blue: #0b64d8; --soft: #f6f7f9; }
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font: 10.5pt/1.55 "Segoe UI", Arial, sans-serif; color: var(--ink); background: #fff; margin: 0; }
+a { color: var(--blue); text-decoration: none; overflow-wrap: anywhere; }
+code { font: 0.88em Consolas, "Cascadia Mono", monospace; background: #f0f2f5; padding: 0.05em 0.3em; border-radius: 3px; overflow-wrap: anywhere; }
+pre, .hl pre { font: 8.4pt/1.45 Consolas, "Cascadia Mono", monospace; background: #f7f8fa; border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px 10px; white-space: pre-wrap; word-break: break-word; margin: 0.4em 0 0.9em; }
+pre code { background: none; padding: 0; font-size: inherit; }
+.hl { background: none; }
+h1, h2, h3, h4 { color: #0f1419; line-height: 1.25; break-after: avoid; }
+h2 { font-size: 15pt; margin: 1.5em 0 0.4em; padding-bottom: 0.2em; border-bottom: 1px solid var(--line); }
+h3 { font-size: 12.5pt; margin: 1.2em 0 0.3em; }
+h4 { font-size: 11pt; margin: 1em 0 0.3em; }
+p, li { orphans: 3; widows: 3; }
+table { border-collapse: collapse; width: 100%; font-size: 9pt; margin: 0.6em 0 1em; }
+th, td { border: 1px solid var(--line); padding: 4px 6px; text-align: left; vertical-align: top; }
+th { background: var(--soft); }
+tr, img, .code-title { break-inside: avoid; }
+img { max-width: 100%; max-height: 190mm; display: block; margin: 0.6em auto; }
+blockquote { border-left: 3px solid var(--line); margin: 0.6em 0; padding: 0 0.9em; color: var(--muted); }
+
+/* cover + contents */
+.cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; padding: 0 10mm;
+  border-left: 10px solid var(--accent); break-after: page; }
+.cover h1 { font-size: 46pt; margin: 0.1em 0; }
+.cover-kicker { text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); font-size: 11pt; }
+.cover-sub { font-size: 14pt; max-width: 130mm; color: #333; }
+.cover-meta { color: var(--muted); font-size: 9.5pt; margin-top: 3em; }
+.toc { break-after: page; }
+.toc ol { list-style: none; padding: 0; columns: 2; column-gap: 10mm; font-size: 10pt; }
+.toc li { break-inside: avoid; padding: 1.5px 0; }
+.toc li a { color: var(--ink); }
+.toc-sec { font-weight: 700; color: var(--accent); margin-top: 0.8em; text-transform: uppercase; font-size: 8.5pt; letter-spacing: 0.08em; }
+.toc-n { display: inline-block; width: 2.2em; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* parts + pages */
+.part { break-before: page; break-after: page; height: 240mm; display: flex; flex-direction: column; justify-content: center; padding-left: 10mm; border-left: 6px solid var(--accent); }
+.part-label { text-transform: uppercase; letter-spacing: 0.2em; color: var(--muted); }
+.part-title { font-size: 34pt; margin: 0.2em 0; }
+.page { break-before: page; }
+.part + .page { break-before: auto; }
+.crumb { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.page-title { font-size: 24pt; margin: 0.15em 0 0.2em; }
+.lede { font-size: 12pt; color: #3c4450; margin: 0 0 0.3em; }
+.src { font-size: 8.5pt; color: var(--muted); margin-bottom: 1.2em; padding-bottom: 0.8em; border-bottom: 2px solid var(--accent); }
+
+/* expanded components */
+.code-title { display: inline-block; font: 600 8.5pt "Segoe UI", Arial, sans-serif; background: var(--accent); color: #fff;
+  padding: 2px 9px; border-radius: 5px 5px 0 0; margin: 0.5em 0 -0.45em; }
+.code-group { margin: 0.5em 0; }
+.tabs { border: 1px solid var(--line); border-radius: 8px; padding: 2px 12px 6px; margin: 0.8em 0; }
+.tab { border-top: 1px dashed var(--line); padding-top: 4px; }
+.tab:first-of-type { border-top: 0; }
+.tab-title { font-weight: 700; color: var(--accent); font-size: 10pt; margin: 0.5em 0 0.3em; }
+.tab-title::before { content: "▸ "; }
+.callout { border-left: 4px solid #7a8794; background: var(--soft); border-radius: 0 6px 6px 0; padding: 6px 12px; margin: 0.8em 0; }
+.callout > :last-child { margin-bottom: 0.2em; }
+.callout-label { font-weight: 700; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.06em; margin: 2px 0 2px; }
+.callout.tip { border-color: #2e9d5b; background: #eef8f1; } .callout.tip .callout-label { color: #1f7a45; }
+.callout.note, .callout.info { border-color: #3b82f6; background: #eff5ff; } .callout.note .callout-label, .callout.info .callout-label { color: #1d5fc9; }
+.callout.warning, .callout.danger { border-color: #d98a00; background: #fff7e8; } .callout.warning .callout-label { color: #a26400; }
+.callout.check { border-color: #2e9d5b; background: #eef8f1; }
+.callout.prompt { border-color: #7c5cd6; background: #f5f2ff; } .callout.prompt .callout-label { color: #5b3fb3; }
+.steps { margin: 0.8em 0; }
+.step { border-left: 2px solid var(--line); padding: 0 0 0.4em 16px; margin-left: 10px; }
+.step-title { font-weight: 700; font-size: 11pt; margin: 0.6em 0 0.3em -29px; break-after: avoid; }
+.step-n { display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 9pt; margin-right: 8px; }
+.accordion { border: 1px solid var(--line); border-radius: 6px; padding: 2px 12px 4px; margin: 0.6em 0; }
+.acc-title { font-weight: 700; margin: 0.4em 0 0.2em; }
+.acc-title::before { content: "⌄ "; color: var(--muted); }
+.card-group, .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0.8em 0; }
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; break-inside: avoid; font-size: 9.5pt; }
+.card-title { font-weight: 700; font-size: 10.5pt; margin: 2px 0; }
+.card > p { margin: 0.2em 0; }
+.param { border-bottom: 1px solid var(--line); padding: 4px 0 2px; }
+.param-head { margin: 2px 0; }
+.param > p { margin: 0.2em 0 0.4em; }
+.ptype { color: #5b3fb3; font-size: 9pt; margin-left: 6px; }
+.preq { color: #c0392b; font-size: 8.5pt; margin-left: 6px; }
+.pdef { color: var(--muted); font-size: 8.5pt; margin-left: 6px; }
+.update { border-left: 3px solid var(--accent); padding-left: 12px; margin: 1em 0; }
+.update-label { font-weight: 700; font-size: 11pt; }
+.tag { font-weight: 500; font-size: 8pt; background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 0 7px; margin-left: 5px; }
+.frame { margin: 0.8em 0; } .caption { text-align: center; color: var(--muted); font-size: 9pt; }
+.embed { border: 1px dashed #aab; border-radius: 6px; padding: 6px 12px; color: var(--muted); font-size: 9pt; font-style: italic; }
+pre.tree { background: #fbfbfc; }
+.code-title { break-after: avoid; }
+pre.mermaid { background: #fff; border: 1px solid var(--line); text-align: center; white-space: pre; font-family: "Segoe UI", Arial, sans-serif; break-inside: avoid; }
+pre.mermaid svg { max-width: 100% !important; max-height: 200mm; height: auto; }

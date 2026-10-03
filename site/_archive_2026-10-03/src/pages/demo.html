@@ -1,0 +1,104 @@
+<!--
+title: Try the demo
+description: Play two real cards the Unbox Learning engine generated from public encyclopedia articles: a ten-second true-or-false round and a put-in-order game.
+nav: demo
+-->
+<section class="page-hero">
+  <div class="hex-field"></div>
+  <div class="wrap">
+    <p class="crumbs"><a href="/">Home</a> / Try the demo</p>
+    <h1>Play two cards the engine made.</h1>
+    <p class="lede">Both were generated from public encyclopedia articles, one on the French Revolution and one on the water cycle. No sign-up needed.</p>
+  </div>
+</section>
+
+<section class="block demo" id="play">
+  <div class="wrap demo-grid">
+    <div class="demo-copy">
+      <p class="eyebrow v">Game 1 · Time attack</p>
+      <h2 style="font-size:clamp(30px,4.5vw,46px);margin-top:12px">True or false, against the clock.</h2>
+      <p style="color:var(--muted);font-size:18px;margin-top:16px">Four statements, ten seconds each. This kind of round tests whether an idea stuck, and it comes back in the learner's memory deck for anything they miss.</p>
+      <ul>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Made from: "Causes of the French Revolution"</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Audience: school students, 13–16</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Every answer explains why</li>
+      </ul>
+    </div>
+    <div class="card-stage">
+      <div class="card" aria-live="polite">
+        <div class="card-top">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="var(--muted)" stroke-width="2.6" stroke-linecap="round"/></svg>
+          <div class="bar"><i id="prog"></i></div>
+          <span class="xp" id="xp">★ 0</span>
+        </div>
+        <span class="tag">True or false?</span>
+        <h3>Why the money ran out</h3>
+        <div class="statement" id="stmt">France's debt was far higher than Britain's.</div>
+        <div class="timer"><i id="timer"></i></div>
+        <div class="tf" id="tf">
+          <button class="f" type="button" data-v="false">✗ False</button>
+          <button class="t" type="button" data-v="true">✓ True</button>
+        </div>
+        <div class="fb" id="fb"></div>
+        <div class="dots" id="dots"></div>
+        <button class="btn btn-violet again" id="again" type="button" hidden>Play again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="order-game">
+  <div class="wrap demo-grid">
+    <div class="demo-copy">
+      <p class="eyebrow v">Game 2 · Put in order</p>
+      <h2 style="font-size:clamp(30px,4.5vw,46px);margin-top:12px">Follow a drop of water.</h2>
+      <p style="color:var(--muted);font-size:18px;margin-top:16px">Processes are taught as sequences, so the engine turns them into ordering games. Tap the steps in the order they happen. Tap a step again to take it back.</p>
+      <ul>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Made from: "Water cycle"</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Module 2 of 4: "How a drop journeys"</li>
+        <li><svg width="22" height="22" aria-hidden="true"><use href="#check"/></svg>Works by tapping, so it's easy on a phone</li>
+      </ul>
+    </div>
+    <div class="card-stage">
+      <div class="card" aria-live="polite">
+        <span class="tag" style="margin-top:0">Put in order</span>
+        <h3>From the sea and back again</h3>
+        <div class="order-list" id="order" data-answer='["evap","cond","prec","run","back"]'>
+          <button type="button" data-id="prec"><span class="pos"></span>Rain or snow falls from the clouds</button>
+          <button type="button" data-id="back"><span class="pos"></span>Rivers and groundwater carry it back to the sea</button>
+          <button type="button" data-id="evap"><span class="pos"></span>The sun warms the sea and water evaporates</button>
+          <button type="button" data-id="run"><span class="pos"></span>It runs off the land or soaks into the soil</button>
+          <button type="button" data-id="cond"><span class="pos"></span>Vapour cools and condenses into clouds</button>
+        </div>
+        <div class="fb" id="order-fb"></div>
+        <button class="btn btn-violet again" id="order-reset" type="button" hidden>Try again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow c">And six more</p>
+      <h2>The other games in every course.</h2>
+    </div>
+    <div class="grid-3">
+      <article class="box"><h3>Sort it</h3><p>Drop each item into the right group, such as renewable or non-renewable, or allowed or not allowed.</p></article>
+      <article class="box"><h3>Match up</h3><p>Pair terms with meanings, causes with effects, or tools with jobs.</p></article>
+      <article class="box"><h3>Odd one out</h3><p>Spot the item that doesn't belong, and say why.</p></article>
+      <article class="box"><h3>Fill the gap</h3><p>Complete a key sentence with the missing word.</p></article>
+      <article class="box"><h3>Quick check</h3><p>One question, several answers, with an explanation for each wrong one.</p></article>
+      <article class="box"><h3>Your turn</h3><p>A short written task. The tutor gives feedback and shows a stronger version of the learner's own answer.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="block" style="padding-top:0">
+  <div class="wrap">
+    <div class="cta">
+      <div><h2>Want this made from your material?</h2><p>Tell us what you teach and we'll build a sample course with you.</p></div>
+      <a class="btn btn-primary" href="/contact/?topic=demo">Book a walkthrough</a>
+    </div>
+  </div>
+</section>

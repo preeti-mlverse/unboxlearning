@@ -1,0 +1,68 @@
+{
+  "trailingSlash": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/features/",
+      "destination": "/experience/",
+      "permanent": true
+    },
+    {
+      "source": "/plans/",
+      "destination": "/contact/?topic=early-access",
+      "permanent": false
+    },
+    {
+      "source": "/solutions/",
+      "destination": "/organizations/",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/schools/",
+      "destination": "/organizations/#schools",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/companies/",
+      "destination": "/organizations/#companies",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/publishers/",
+      "destination": "/educators/",
+      "permanent": true
+    },
+    {
+      "source": "/solutions/exam-prep/",
+      "destination": "/learners/",
+      "permanent": true
+    }
+  ]
+}
