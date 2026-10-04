@@ -1,0 +1,238 @@
+<title>UnboxEd Engine Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap">
+<style>
+/* Layout: one reading column; status table and phase cards; a layered diagram of the engine. Brand: navy, gold, violet. */
+:root {
+  --bg: #F6F4FD; --surface: #FFFFFF; --ink: #1B164B; --muted: #5E5880; --line: #E2DDF5;
+  --violet: #5B3FE0; --gold: #B98A00; --gold-bg: #FFF4CC; --live: #0E7A5A; --live-bg: #DDF5EC; --part: #8A5A00; --part-bg: #FFF1D6; --todo: #B23A26; --todo-bg: #FDE9E4;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --body: "Figtree", "Segoe UI", system-ui, sans-serif; --mono: "DM Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #120E33; --surface: #1C1748; --ink: #F1EEFF; --muted: #B4ADDB; --line: #352D72; --violet: #A999FF; --gold: #F2C14E; --gold-bg: #3A2F0E;
+  --live: #7FE0BE; --live-bg: #12352A; --part: #F5C77A; --part-bg: #3A2C10; --todo: #FF9A86; --todo-bg: #3D1E1E; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #120E33; --surface: #1C1748; --ink: #F1EEFF; --muted: #B4ADDB; --line: #352D72; --violet: #A999FF; --gold: #F2C14E; --gold-bg: #3A2F0E;
+  --live: #7FE0BE; --live-bg: #12352A; --part: #F5C77A; --part-bg: #3A2C10; --todo: #FF9A86; --todo-bg: #3D1E1E; color-scheme: dark; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.6 var(--body); }
+.wrap { max-width: 1000px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 80px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.02em; }
+h2 { font-size: 26px; font-weight: 800; margin-top: 52px; }
+h3 { font-size: 18px; font-weight: 700; }
+p { max-width: 68ch; margin: 10px 0; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--violet); }
+.lede { font-size: 18px; color: var(--muted); }
+.answer { background: var(--surface); border: 2px solid var(--ink); border-radius: 16px; padding: 20px 22px; margin-top: 24px; box-shadow: 6px 6px 0 var(--gold); }
+.answer ol { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+.tbl { overflow-x: auto; margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+th { font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+.pill { display: inline-block; font: 500 11px var(--mono); padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+.live { background: var(--live-bg); color: var(--live); } .part { background: var(--part-bg); color: var(--part); } .todo { background: var(--todo-bg); color: var(--todo); }
+.stack { display: grid; gap: 8px; margin-top: 16px; }
+.layer { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.layer b { font-family: var(--display); font-size: 16px; }
+.layer span { color: var(--muted); font-size: 14.5px; }
+.layer.core { border: 2px solid var(--violet); }
+.layer.x { background: var(--gold-bg); border-color: transparent; }
+@media (max-width: 640px) { .layer { grid-template-columns: 1fr; gap: 2px; } }
+.principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.principles div { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.principles p { font-size: 15px; color: var(--muted); margin: 4px 0 0; }
+@media (max-width: 720px) { .principles { grid-template-columns: 1fr; } }
+.phase { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-top: 12px; }
+.phase .n { font: 800 28px var(--display); color: var(--violet); }
+.phase .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
+.phase .tag { font: 500 11px var(--mono); background: var(--bg); border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--muted); }
+.phase ul { margin: 0; padding-left: 18px; font-size: 15px; display: grid; gap: 3px; }
+.phase .exit { margin-top: 8px; font-size: 14.5px; }
+.phase .exit b { color: var(--violet); }
+@media (max-width: 560px) { .phase { grid-template-columns: 1fr; gap: 4px; } }
+.note { font-size: 14px; color: var(--muted); }
+ul.plain { padding-left: 18px; display: grid; gap: 6px; }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">UnboxEd · engine plan · 4 October 2026</p>
+  <h1>How to build the engine behind the website</h1>
+  <p class="lede">What the website promises, what already exists in the code, what's missing, and the order to build it in. Grounded in the current codebase at github.com/preeti-mlverse/unboxlearning.</p>
+
+  <div class="answer">
+    <p style="margin:0"><b>In short:</b> don't build every feature at once. Build one complete loop for real people first, then widen it.</p>
+    <ol>
+      <li><b>Foundations:</b> accounts, a real database, a server, and quality and cost checks.</li>
+      <li><b>The core loop, made solid:</b> an educator unboxes a chapter, reviews it and shares it, and learners complete it.</li>
+      <li><b>The learner model:</b> what each learner knows, what they're forgetting, which misconceptions they hold.</li>
+      <li><b>Adaptation and educator analytics,</b> built on that learner model.</li>
+      <li><b>Breadth:</b> voice, languages, simulations, role-play, then LMS integrations.</li>
+    </ol>
+    <p style="margin:10px 0 0">About half of what the website shows already works in some form. The plan below turns that into a product a pilot school can use, in roughly <b>5–6 months</b> with one developer working with an AI coding assistant.</p>
+  </div>
+
+  <h2>1. What the website promises, and where the engine stands</h2>
+  <p>Every claim on unboxlearning.in, matched to the current code. <span class="pill live">Works</span> = built and tested. <span class="pill part">Partial</span> = a first version exists but needs finishing. <span class="pill todo">To build</span> = not started.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Capability</th><th>Status</th><th>What exists today</th><th>What's missing</th></tr></thead>
+    <tbody>
+      <tr><td><b>Bring any knowledge</b></td><td><span class="pill live">Works</span></td><td>11 source types: PDF (with OCR), Word, PowerPoint, Excel, e-books, web pages, docs sites, YouTube, audio and video, images, text</td><td>Better handling of scanned books and maths; expert-interview capture</td></tr>
+      <tr><td><b>We understand it</b></td><td><span class="pill live">Works</span></td><td>Content profile, concept extraction, concept graph, suggested goals</td><td>Stronger prerequisite links between concepts (needed for adaptation)</td></tr>
+      <tr><td><b>We design the learning</b></td><td><span class="pill live">Works</span></td><td>Editable outline, micro-modules, 12 card types, 8 games, illustrations, diagrams from data, narration</td><td>Choosing simulations and role-play when they fit the concept</td></tr>
+      <tr><td><b>Built on the source</b></td><td><span class="pill part">Partial</span></td><td>Every card linked to source passages; automatic fact-check; flags for review</td><td>A "where is this from?" view for learners; an audit trail for educators</td></tr>
+      <tr><td><b>Educator studio</b></td><td><span class="pill part">Partial</span></td><td>Card editor, AI rewrite, redraw, publish, share by link</td><td>Accounts, classes, assigning to learners, versions</td></tr>
+      <tr><td><b>AI tutor</b></td><td><span class="pill part">Partial</span></td><td>Answers from the source, hint ladder, never gives the answer away, replies in the learner's language</td><td>Memory of the learner's past struggles; misconception tagging; tutor quality tests</td></tr>
+      <tr><td><b>Assessment that teaches</b></td><td><span class="pill part">Partial</span></td><td>Instant feedback on every game; written answers graded with a better version</td><td>Misconception detection, retry loops, oral answers</td></tr>
+      <tr><td><b>Mastery and personal paths</b></td><td><span class="pill part">Partial</span></td><td>Mastery model (BKT) and remediation in the older app; XP and streaks in the new one</td><td>Mastery per concept in the new app; path rules: skip, worked example, simpler route, prerequisite</td></tr>
+      <tr><td><b>Learn today, remember later</b></td><td><span class="pill part">Partial</span></td><td>Memory deck with simple review intervals</td><td>A proper spaced-repetition scheduler (FSRS) and reminders</td></tr>
+      <tr><td><b>Learn in your language</b></td><td><span class="pill part">Partial</span></td><td>Course translation into 10 languages; tutor replies in the chosen language</td><td>Explanations adapted to the learner, not just translated; native-speaker quality checks</td></tr>
+      <tr><td><b>Voice-first</b></td><td><span class="pill part">Partial</span></td><td>Browser speech input, spoken replies, narrated cards</td><td>Natural spoken conversation with interruptions; speaking practice and scoring</td></tr>
+      <tr><td><b>Learning you can touch</b></td><td><span class="pill part">Partial</span></td><td>A simulation renderer in the older app; six hand-built demos on the website</td><td>A library of interactive widgets that the engine picks and configures from the content</td></tr>
+      <tr><td><b>Role-play scenarios</b></td><td><span class="pill part">Partial</span></td><td>A role-play activity in the older app</td><td>Bring it into micro-courses, with rubric-based feedback</td></tr>
+      <tr><td><b>See where learning stops</b></td><td><span class="pill todo">To build</span></td><td>Raw attempt data is recorded</td><td>Educator dashboard: mastery by concept, misconceptions, drop-off, who needs help</td></tr>
+      <tr><td><b>Accounts and organisations</b></td><td><span class="pill todo">To build</span></td><td>Sign-up and log-in pages on the website, not connected</td><td>Real accounts, roles (learner, educator, admin), schools and organisations</td></tr>
+      <tr><td><b>Works with your LMS</b></td><td><span class="pill part">Partial</span></td><td>Question export (QTI), course bundle export</td><td>SCORM and cmi5 packages, xAPI tracking, LTI for Moodle and similar</td></tr>
+      <tr><td><b>Lightweight and mobile-first</b></td><td><span class="pill part">Partial</span></td><td>Runs in any phone browser</td><td>Offline-friendly installable app (PWA), low-data mode</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>2. The shape of the engine</h2>
+  <p>Seven layers, each with one job. The <b>content graph</b> in the middle is the contract every other part reads and writes; the <b>learner model</b> is the second one. Most of the work below is about strengthening these two.</p>
+  <div class="stack">
+    <div class="layer"><b>1 · Ingest</b><span>Any file or link → clean, structured text, tables, figures and transcripts, with page and timestamp references</span></div>
+    <div class="layer core"><b>2 · Content graph</b><span>Concepts, relationships, prerequisites, examples, misconceptions, each traced to the source passages</span></div>
+    <div class="layer"><b>3 · Learning design</b><span>Goal and audience → outline → for each concept, the right format: card, game, simulation, role-play, voice lesson</span></div>
+    <div class="layer"><b>4 · Generation and checks</b><span>Structured AI output, then automatic checks: reading level, answer keys, fact-check against the source, human review</span></div>
+    <div class="layer"><b>5 · Delivery</b><span>Learner app, tutor, voice, languages, sharing, classes, LMS packages</span></div>
+    <div class="layer core"><b>6 · Learner model</b><span>Every answer becomes evidence: mastery per concept, memory strength, misconceptions, time spent</span></div>
+    <div class="layer"><b>7 · Adaptation and analytics</b><span>What each learner sees next, reviews timed to memory, and the educator dashboard</span></div>
+    <div class="layer x"><b>Across all layers</b><span>Accounts and organisations · AI provider gateway with cost caps · job queue · file storage · privacy and security · quality test sets · usage and impact logging</span></div>
+  </div>
+
+  <h2>3. How to build it well</h2>
+  <div class="principles">
+    <div><h3>One complete loop before breadth</h3><p>A real educator and a real class using one chapter end to end beats ten half-finished features. Every phase ends with real people using it.</p></div>
+    <div><h3>Measure quality from day one</h3><p>Keep a fixed set of 10 test sources across subjects and languages. Every change runs against it: card quality, fact-check flags, cost per course, tutor answers.</p></div>
+    <div><h3>Record evidence for the grant as you go</h3><p>Log every learning event in a standard format (xAPI style) from the first pilot. Mastery gains and retention are what reviewers will ask for later.</p></div>
+    <div><h3>Use proven parts, build the core</h3><p>Use existing tools for accounts, the database, spaced repetition and LMS packaging. Spend your own effort on the content graph, learning design and learner model.</p></div>
+    <div><h3>Keep claims honest</h3><p>Label features "live", "in pilot" or "coming" on the website and in grant documents. Promise the loop you can show; describe the rest as the roadmap.</p></div>
+    <div><h3>Control cost and privacy early</h3><p>A spending cap per course and per learner, Indian hosting for learner data, and consent for children's data under India's DPDP Act, before the first school pilot.</p></div>
+  </div>
+
+  <h2>4. The build sequence</h2>
+  <p class="note">Weeks assume one developer working with an AI coding assistant. Phases 0–3 make a pilot-ready product (about 13 weeks); phases 4–6 add the differentiators.</p>
+
+  <div class="phase"><div class="n">0</div><div>
+    <h3>Foundations</h3>
+    <div class="meta"><span class="tag">2 weeks</span><span class="tag">needs the new server</span></div>
+    <ul>
+      <li>Server at app.unboxlearning.in: the app, a PostgreSQL database, file storage, automatic HTTPS</li>
+      <li>Accounts and roles (learner, educator, admin) and organisations; connect the website's sign-up and log-in</li>
+      <li>Background job queue for course building; spending caps per course</li>
+      <li>Quality test set: 10 sources (science, history, maths, a policy, a video, Hindi material) with a scoring sheet</li>
+      <li>Automatic tests and deployment on every change</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> an educator signs up on unboxlearning.in, logs into the app and builds a course, and every change is tested before going live.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">1</div><div>
+    <h3>The core loop, made solid</h3>
+    <div class="meta"><span class="tag">3–4 weeks</span><span class="tag">pilot with 2–3 educators</span></div>
+    <ul>
+      <li>Unbox it: upload → understand → outline → generate → review → publish, reliable on the test set</li>
+      <li>Classes: an educator creates a class, assigns a course, learners join with a code</li>
+      <li>"Where is this from?" on every card; the educator sees the source passage behind each card</li>
+      <li>Better scanned-PDF and maths handling (docling); stronger prerequisite links in the concept graph</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> pilot educators turn their own material into courses, fewer than 1 card in 20 needs a fix, and a course costs under ₹15 to build.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">2</div><div>
+    <h3>The learner model</h3>
+    <div class="meta"><span class="tag">3 weeks</span><span class="tag">first class pilot</span></div>
+    <ul>
+      <li>Every answer, hint, tutor question and time spent is recorded as a learning event</li>
+      <li>Mastery per concept (BKT, moved from the older app); spaced reviews with FSRS and simple reminders</li>
+      <li>Assessment that teaches: tag likely misconceptions, give a hint, let the learner retry, update mastery</li>
+      <li>Tutor remembers the learner's weak concepts; a tutor test set (does it ever give the answer away? stay on source?)</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> a class uses a course for two weeks, and you can show each learner's mastery by concept and what they still remember a week later.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">3</div><div>
+    <h3>Adaptation and the educator dashboard</h3>
+    <div class="meta"><span class="tag">3 weeks</span><span class="tag">first impact numbers</span></div>
+    <ul>
+      <li>Path rules: skip what's mastered, add a worked example when nearly there, a simpler explanation or a prerequisite when there's a gap</li>
+      <li>Educator dashboard: mastery by concept, common misconceptions, drop-off points, learners who need help</li>
+      <li>Pre-test and post-test per course to measure learning gain (the evidence module exists in the older app)</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> two learners with different answers get different paths through the same course, and the pilot shows a measurable pre/post gain. This is the evidence for the grant.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">4</div><div>
+    <h3>Voice and languages</h3>
+    <div class="meta"><span class="tag">3–4 weeks</span></div>
+    <ul>
+      <li>Natural spoken conversation with the tutor, including interruptions, using a real-time voice AI service</li>
+      <li>Explanations adapted per language and level, not just translated; a glossary so terms stay consistent</li>
+      <li>Native-speaker review of Hindi and one more Indian language; speaking practice for language courses</li>
+      <li>Low-data mode and an installable phone app (PWA)</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> a learner can complete a module mostly by voice in Hindi, and a native speaker rates the explanations as natural.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">5</div><div>
+    <h3>Learning you can touch</h3>
+    <div class="meta"><span class="tag">4 weeks</span></div>
+    <ul>
+      <li>A library of 8–10 interactive widgets: sliders on a formula, cause and effect, sorting, building a diagram, graph exploration, timelines</li>
+      <li>The engine picks a widget when a concept suits it and fills in its settings from the source; the educator can preview and change it</li>
+      <li>Role-play scenarios inside micro-courses, with feedback against a rubric</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> on the test set, at least one in three science or economics modules gets a working simulation without hand-coding.</p>
+  </div></div>
+
+  <div class="phase"><div class="n">6</div><div>
+    <h3>Integrations and scale</h3>
+    <div class="meta"><span class="tag">3–4 weeks</span></div>
+    <ul>
+      <li>SCORM and cmi5 packages; xAPI tracking; LTI 1.3 for Moodle and other learning platforms</li>
+      <li>Organisation admin: many classes, many educators, usage and cost reports</li>
+      <li>Later: marketplace, paid courses, more languages</li>
+    </ul>
+    <p class="exit"><b>Done when:</b> a course runs inside a school's Moodle and reports scores back.</p>
+  </div></div>
+
+  <h2>5. What to reuse rather than build</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Need</th><th>Use</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Accounts and log-in</td><td>Supabase Auth, or an auth library in the app</td><td>Secure log-in, password reset and roles without writing your own</td></tr>
+      <tr><td>Database</td><td>PostgreSQL (replacing the current SQLite)</td><td>Many users at once, backups, standard hosting</td></tr>
+      <tr><td>Files and media</td><td>Cloudflare R2</td><td>Cheap storage for uploads, pictures and audio</td></tr>
+      <tr><td>Spaced repetition</td><td>py-fsrs</td><td>The modern, proven review scheduler</td></tr>
+      <tr><td>Mastery model</td><td>pyBKT (already in use in the older app)</td><td>Standard knowledge tracing</td></tr>
+      <tr><td>Better PDF reading</td><td>docling</td><td>Scanned pages, tables, maths</td></tr>
+      <tr><td>Voice</td><td>A real-time voice AI API, plus Whisper for transcripts</td><td>Natural conversation without building speech tech</td></tr>
+      <tr><td>Maths and graph widgets</td><td>Mafs, JSXGraph</td><td>Interactive graphs that are ready to configure</td></tr>
+      <tr><td>LMS packages</td><td>The SCORM, cmi5 and LTI 1.3 standards</td><td>Packaging only; write a thin layer over the standards</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2>6. For the grant submission</h2>
+  <ul class="plain">
+    <li><b>Present as working now:</b> unbox any material into a micro-course, source-checked cards and games, the tutor, narration, translation, sharing by link.</li>
+    <li><b>Present as the pilot plan:</b> phases 1–3, with the measures you'll report: mastery gain from pre-test to post-test, retention after a week, educator time saved, cost per course.</li>
+    <li><b>Present as the roadmap:</b> voice-first conversation, adapted Indian-language explanations, simulations, LMS integrations.</li>
+    <li><b>What only you can arrange:</b> 2–3 pilot educators, one pilot class, a native Hindi reviewer, and consent forms for any learners under 18.</li>
+  </ul>
+
+  <h2>7. Decisions needed now</h2>
+  <ul class="plain">
+    <li><b>Server:</b> buy the VPS (AWS Lightsail Mumbai or DigitalOcean Bangalore, 2–4 GB) when you're ready to start phase 0.</li>
+    <li><b>Pilot partners:</b> which school, NGO or educators you can approach first. This decides which subject goes into the test set first.</li>
+    <li><b>Grant timeline:</b> the submission date and what the funder requires (a working demo, pilot data, or a plan only). This decides how far to get before submitting.</li>
+  </ul>
+</div>
