@@ -1,4 +1,4 @@
-"""Generate the second round of Unbox Learning logo concepts (box ideas 11-20) and their review board.
+"""Generate the second round of UnboxEd logo concepts (box ideas 11-20) and their review board.
 
 Run: python make_concepts_2.py   ->  concepts/11-*.svg ... and logo-concepts-2.html
 """
@@ -205,7 +205,7 @@ CONCEPTS = [
 def board():
     css = (HERE / "logo-concepts.html").read_text(encoding="utf-8")
     style = css[css.index("<style>"):css.index("</style>") + 8]
-    head = css[:css.index("<style>")].replace("<title>Unbox Learning logo concepts</title>", "<title>Unbox Learning logo concepts, round 2</title>")
+    head = css[:css.index("<style>")].replace("<title>UnboxEd logo concepts</title>", "<title>UnboxEd logo concepts, round 2</title>")
     sections = ""
     for i, (slug, name, idea, bullets, _, _) in enumerate(CONCEPTS, 11):
         lis = "".join(f"<li>{b}</li>" for b in bullets)
@@ -222,7 +222,7 @@ def board():
       <div class="tile dark"><small>On dark</small><img class="big" src="concepts/{slug}-dark.svg" alt=""></div>
       <div class="tile light"><small>Wordmark</small><div class="lockup"><img src="concepts/{slug}.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
       <div class="tile dark"><small>Wordmark, dark</small><div class="lockup"><img src="concepts/{slug}-dark.svg" alt=""><span><b>unbox</b> <i>learning</i></span></div></div>
-      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/{slug}.svg" alt=""><img src="concepts/{slug}.svg" alt=""><img src="concepts/{slug}.svg" alt=""></div><div class="tab"><img src="concepts/{slug}.svg" alt="">Unbox Learning</div></div></div>
+      <div class="tile light"><small>Favicon sizes</small><div class="row2"><div class="sizes"><img src="concepts/{slug}.svg" alt=""><img src="concepts/{slug}.svg" alt=""><img src="concepts/{slug}.svg" alt=""></div><div class="tab"><img src="concepts/{slug}.svg" alt="">UnboxEd</div></div></div>
       <div class="tile light"><small>App icon</small><div class="app"><img src="concepts/{slug}-dark.svg" alt=""></div></div>
     </div>
   </section>'''
@@ -233,7 +233,7 @@ def board():
              ".overview img{width:84px;height:84px}.overview figcaption{font:600 13px Figtree,system-ui;margin-top:6px}"
              "@media(max-width:820px){.overview{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>")
     return (head + style + extra + "</head>\n<body>\n<div class=\"wrap\">\n"
-            "  <h1>Unbox Learning: logo concepts, round 2</h1>\n"
+            "  <h1>UnboxEd: logo concepts, round 2</h1>\n"
             "  <p class=\"intro\">Ten sample logos, all built from the box, one for each idea you shared. All ten are side by side first; "
             "below, each is shown on light and dark, with the wordmark, at favicon sizes and as an app icon.</p>\n"
             f"  <div class=\"overview\">{overview}</div>{sections}\n</div>\n</body>\n</html>\n")

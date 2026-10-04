@@ -1,4 +1,4 @@
-"""Build the Unbox Learning marketing site into public/.
+"""Build the UnboxEd marketing site into public/.
 
 Each file in src/pages is an HTML fragment with a small header comment:
 

@@ -356,7 +356,7 @@ footer.site p { max-width: 30em; }
 .notfound { text-align: center; padding-block: 120px; display: grid; gap: 18px; justify-items: center; }
 .notfound h1 { font-size: clamp(60px, 12vw, 140px); color: var(--violet); }
 
-/* ================= Unbox Learning: narrative sections ================= */
+/* ================= UnboxEd: narrative sections ================= */
 :root { --navy: #1B164B; --plum: #29245F; --sun: #F2B900; --sun-deep: #B98A00; --aqua-ink: #1F6E78; }
 
 /* header buttons */

@@ -50,7 +50,7 @@ def write_glb(path):
         nodes.append({"mesh": i, "name": f"part{i}"})
     while len(bin_) % 4:
         bin_ += b"\0"
-    gltf = {"asset": {"version": "2.0", "generator": "learning-engine test"}, "scene": 0,
+    gltf = {"asset": {"version": "2.0", "generator": "UnboxEd test"}, "scene": 0,
             "scenes": [{"nodes": list(range(len(nodes)))}], "nodes": nodes, "meshes": meshes,
             "materials": [{"pbrMetallicRoughness": {"baseColorFactor": c, "metallicFactor": 0.1, "roughnessFactor": 0.6}}
                           for c in colors],

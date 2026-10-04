@@ -105,7 +105,7 @@ export function ServerDown({ detail }: { detail: string }) {
   return (
     <div className="m-empty">
       <h2>Can't reach the course server</h2>
-      <p>The learning engine isn't responding. Start it with <strong>start.bat</strong> in the platform folder, then reload this page.</p>
+      <p>UnboxEd isn't responding. Start it with <strong>start.bat</strong> in the platform folder, then reload this page.</p>
       <p className="m-sub small">{detail}</p>
       <button className="m-btn" onClick={() => location.reload()}>Try again</button>
     </div>
