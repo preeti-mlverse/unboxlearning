@@ -5,7 +5,7 @@ import re
 import time
 from pathlib import Path
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -18,13 +18,16 @@ from .ingest import SUPPORTED, ingest_file, ingest_text, ingest_url
 from .llm import LLMError, gateway
 from .tutor import roleplay_turn, tutor_reply
 
-app = FastAPI(title="Learning Transformation Engine", version="0.1")
+app = FastAPI(title="UnboxEd engine", version="0.2")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 app.mount("/media", StaticFiles(directory=settings.media_dir), name="media")
 
 from .api_micro import router as micro_router  # noqa: E402
+from . import auth  # noqa: E402
 
+auth.ensure_schema()
 app.include_router(micro_router)
+app.include_router(auth.router)
 
 
 def _404(x, what="not found"):
@@ -157,8 +160,14 @@ class CoursePatch(BaseModel):
 
 
 @app.post("/api/courses")
-def create_course(body: CourseIn):
-    return P.create_course(body.title, body.source_ids, body.goal, body.settings)
+def create_course(body: CourseIn, request: Request):
+    u = auth.current_user(request)
+    if u and not auth.is_educator(u):
+        raise HTTPException(403, "Creating courses needs an educator account")
+    c = P.create_course(body.title, body.source_ids, body.goal, body.settings)
+    if u:
+        auth.set_owner(c["id"], u["id"])   # the course belongs to the educator who started it
+    return c
 
 
 @app.get("/api/courses")

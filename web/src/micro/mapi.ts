@@ -49,9 +49,17 @@ export const mapi = {
   rate: (cid: string, learner_id: string, key: string, rating: string) => req<Json>("POST", `/api/micro/${cid}/deck/rate`, { learner_id, key, rating }),
 };
 
+// When someone is signed in, their account is the learner identity everywhere; otherwise a per-course guest name
+// kept in this browser (the original behaviour) is used.
+let accountLearner: { id: string; name: string } | null = null;
+export function setAccountLearner(l: { id: string; name: string } | null) { accountLearner = l; }
+
 export function useLearner(cid: string) {
   const key = `learner:${cid}`;
-  const read = () => { try { return JSON.parse(localStorage.getItem(key) ?? "null") as { id: string; name: string } | null; } catch { return null; } };
+  const read = () => {
+    if (accountLearner) return accountLearner;
+    try { return JSON.parse(localStorage.getItem(key) ?? "null") as { id: string; name: string } | null; } catch { return null; }
+  };
   const save = (l: { id: string; name: string } | null) => { try { if (l) localStorage.setItem(key, JSON.stringify(l)); else localStorage.removeItem(key); } catch { /* ignore */ } };
   return { read, save };
 }
