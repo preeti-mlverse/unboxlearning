@@ -40,3 +40,4 @@ export type Visibility = S["Visibility"];
 export interface ApiErrorBody {
   error: { code: string; message: string; request_id?: string | null; details?: Record<string, unknown> };
 }
+export type SystemEvent = S["SystemEventOut"];

@@ -33,10 +33,11 @@ def send(to: str, subject: str, text: str) -> None:
         log.exception("could not send email: %s", subject)
 
 
-def verification_email(to: str, name: str, token: str) -> None:
+def verification_email(to: str, name: str, token: str, code: str) -> None:
     link = f"{get_settings().app_url}/verify-email?token={token}"
-    send(to, "Confirm your email for UnboxEd", f"Hi {name},\n\nConfirm your email address to finish setting up your "
-         f"UnboxEd account:\n\n{link}\n\nThis link works for 48 hours. If you didn't sign up, you can ignore this email.\n\n— UnboxEd")
+    send(to, f"{code} is your UnboxEd code", f"Hi {name},\n\nYour UnboxEd confirmation code is:\n\n    {code}\n\n"
+         f"Type it into UnboxEd to confirm your email. It works for 30 minutes.\n\nOr open this link instead "
+         f"(it works for 48 hours):\n{link}\n\nIf you didn't sign up, you can ignore this email.\n\n— UnboxEd")
 
 
 def reset_email(to: str, name: str, token: str) -> None:

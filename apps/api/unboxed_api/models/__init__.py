@@ -6,7 +6,7 @@ from .organization import Membership, Organization
 from .content import Course, CourseVersion, Lesson, LessonBlock, Module
 from .files import Document
 from .learning import Enrollment, LessonProgress
-from .system import Job
+from .system import Job, SystemEvent
 
 __all__ = ["User", "Profile", "AuthSession", "AuthToken", "Organization", "Membership", "Course", "CourseVersion",
-           "Module", "Lesson", "LessonBlock", "Document", "Enrollment", "LessonProgress", "Job"]
+           "Module", "Lesson", "LessonBlock", "Document", "Enrollment", "LessonProgress", "Job", "SystemEvent"]

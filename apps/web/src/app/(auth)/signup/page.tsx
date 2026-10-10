@@ -4,11 +4,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import type { AuthResult } from "@shared/index";
 
+import { GoogleButton } from "@/components/GoogleButton";
 import { Alert, Button, Input, Select, cx } from "@/components/ui";
 import { ApiError, post } from "@/lib/api";
 import { SITE_URL } from "@/lib/config";
 import { fieldErrors, signupSchema } from "@/lib/forms";
-import { HOME, useSession } from "@/lib/session";
+import { landing, useSession } from "@/lib/session";
 
 const ROLES = [
   { value: "learner", title: "Learner", sub: "I want to learn something" },
@@ -48,7 +49,8 @@ function SignupForm() {
     try {
       const res = await post<AuthResult>("/auth/signup", { ...parsed.data, phone: parsed.data.phone || null, org: form.org || null });
       await reload();
-      router.replace(`${HOME[res.user.home]}?welcome=1`);
+      const dest = landing(res.user);
+      router.replace(dest === "/verify-email" ? dest : `${dest}?welcome=1`);
     } catch (err) {
       if (err instanceof ApiError) {
         setErrors(err.fields);
@@ -86,6 +88,7 @@ function SignupForm() {
       ) : (
         <form onSubmit={submit} noValidate className="grid gap-4">
           {error && <Alert tone="bad">{error}</Alert>}
+          <GoogleButton role={form.role || undefined} />
           <Input label="Full name" autoComplete="name" value={form.name} error={errors.name} onChange={(e) => set("name", e.target.value)} autoFocus />
           <div className="grid gap-4 sm:grid-cols-2">
             <Input label="Email" type="email" autoComplete="email" value={form.email} error={errors.email} onChange={(e) => set("email", e.target.value)} />

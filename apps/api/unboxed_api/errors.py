@@ -45,9 +45,19 @@ HTTP_CODES = {401: ("UNAUTHENTICATED", "Please log in to continue."), 403: ("FOR
               413: ("FILE_TOO_LARGE", "That file is too large."), 429: ("RATE_LIMITED", "Too many attempts. Please wait a few minutes and try again.")}
 
 
+def _where(request: Request) -> dict:
+    return {"path": request.url.path, "request_id": getattr(request.state, "request_id", None),
+            "user_id": getattr(request.state, "user_id", None)}
+
+
 def install(app: FastAPI) -> None:
+    from .services import events  # late import: events needs the database module
     @app.exception_handler(AppError)
     async def app_error(request: Request, exc: AppError):
+        if exc.code in events.UPLOAD_CODES:
+            events.record(events.UPLOAD_REJECTED, exc.code, exc.message, **_where(request))
+        elif exc.status >= 500:
+            events.record(events.SERVER_ERROR, exc.code, exc.message, **_where(request))
         return JSONResponse(_body(request, exc.code, exc.message, exc.details), status_code=exc.status)
 
     @app.exception_handler(StarletteHTTPException)
@@ -76,4 +86,5 @@ def install(app: FastAPI) -> None:
     @app.exception_handler(Exception)
     async def unexpected(request: Request, exc: Exception):
         log.exception("unhandled error", extra={"request_id": getattr(request.state, "request_id", None)})
+        events.record(events.SERVER_ERROR, "INTERNAL_ERROR", f"{type(exc).__name__}: {exc}", **_where(request))
         return JSONResponse(_body(request, "INTERNAL_ERROR", "Something went wrong on our side. Please try again."), status_code=500)

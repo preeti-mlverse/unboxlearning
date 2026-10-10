@@ -75,12 +75,13 @@ def get(db: Session, principal: Principal, doc_id: str, permission: str = P.DOCU
 
 
 def list_docs(db: Session, principal: Principal, *, q: str | None, course_id: str | None, purpose: str | None,
-              organization_id: str | None) -> list[DocumentOut]:
+              organization_id: str | None, deleted: bool = False) -> list[DocumentOut]:
     orgs = [organization_id] if organization_id else principal.orgs_with(P.DOCUMENT_VIEW)
     orgs = [o for o in orgs if principal.can(P.DOCUMENT_VIEW, o)]
     if not orgs:
         return []
-    stmt = select(Document).where(Document.organization_id.in_(orgs), Document.deleted_at.is_(None))
+    stmt = select(Document).where(Document.organization_id.in_(orgs),
+                                  Document.deleted_at.is_not(None) if deleted else Document.deleted_at.is_(None))
     if q:
         stmt = stmt.where(Document.title.ilike(f"%{q.strip()}%") | Document.original_filename.ilike(f"%{q.strip()}%"))
     if course_id:
@@ -112,3 +113,13 @@ def delete(db: Session, principal: Principal, doc_id: str) -> None:
 
 def signed_path(doc: Document) -> str:
     return f"/files/{sign_file_token(doc.id)}"
+
+
+def restore(db: Session, principal: Principal, doc_id: str) -> DocumentOut:
+    """Undo a delete. Only people who can upload to the workspace can bring a document back."""
+    doc = db.get(Document, doc_id)
+    if doc is None or doc.deleted_at is None or not principal.is_member(doc.organization_id):
+        raise not_found("That deleted document")
+    principal.require(P.DOCUMENT_UPLOAD, doc.organization_id)
+    doc.deleted_at = None
+    return out(db, doc)

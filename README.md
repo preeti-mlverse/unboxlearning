@@ -20,7 +20,7 @@ database/
   seeds/        development seed data
 workers/        background job worker + job handlers
 site/           marketing site (static, python build.py) — sign-up and log-in call the API
-deploy/         nginx + systemd + release script for the app and API
+deploy/         server setup, nginx, release and backup scripts (Docker Compose on the VPS)
 docs/foundation architecture, deployment, status against the Foundation spec
 legacy/         the earlier engine and app, kept for reference while Wave 1+ is rebuilt
 ```
@@ -60,10 +60,13 @@ Seed accounts are `creator@unboxed.local`, `learner@unboxed.local` and `admin@un
 cd apps/api && ../../.venv/Scripts/python -m pytest      # API, permissions, versions, files, jobs, the full Foundation journey
 npm --prefix apps/web run typecheck                      # web app against the generated API types
 npm --prefix apps/web run types                          # regenerate types after changing an API schema
+npm --prefix apps/web run e2e                            # the whole journey in your Chrome (starts the servers if needed)
 ```
 
 ## More
 
 - [docs/foundation/ARCHITECTURE.md](docs/foundation/ARCHITECTURE.md): how it fits together, and why
 - [docs/foundation/STATUS.md](docs/foundation/STATUS.md): the Foundation checklist (0A–0N), what's done and what's next
-- [docs/foundation/DEPLOY.md](docs/foundation/DEPLOY.md): staging and production on the VPS
+- [docs/foundation/TRACKER.md](docs/foundation/TRACKER.md): swapped items, deferred items, open decisions
+- [docs/foundation/DEPLOY.md](docs/foundation/DEPLOY.md): DNS, server setup, staging and production releases
+- [docs/foundation/EMAIL_AND_GOOGLE.md](docs/foundation/EMAIL_AND_GOOGLE.md): email provider and Google sign-in setup

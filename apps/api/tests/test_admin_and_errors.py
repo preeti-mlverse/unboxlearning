@@ -57,3 +57,29 @@ def test_admin_can_restore_a_deleted_course(app, db, creator):
     assert deleted[0]["deleted_at"] is not None
     assert admin.post(f"/admin/courses/{ids['course']}/restore").json()["status"] == "draft"
     assert len(creator.get("/courses").json()) == 1
+
+
+def test_admin_counts_upload_problems_and_errors(app, db, creator):
+    from workers.worker import drain
+    from tests.test_documents_and_jobs import upload
+    admin = make_admin(app, db)
+    upload(creator, "fake.pdf", b"not a pdf")              # rejected at upload
+    upload(creator, "virus.exe", b"MZ")                    # rejected at upload
+    upload(creator, "broken.pdf", b"%PDF-1.7\nbroken")     # accepted, fails processing
+    drain("w")
+    stats = admin.get("/admin/stats").json()
+    assert stats["uploads_rejected_24h"] == 2 and stats["uploads_failed_24h"] == 1 and stats["documents_failed"] == 1
+    kinds = sorted(e["kind"] for e in admin.get("/admin/events").json())
+    assert kinds == ["upload_failed", "upload_rejected", "upload_rejected"]
+    assert creator.get("/admin/events").status_code == 403
+
+
+def test_server_errors_are_counted(app, db, monkeypatch):
+    admin = make_admin(app, db)
+    from unboxed_api.services import learning
+    monkeypatch.setattr(learning, "catalog", lambda *a, **k: 1 / 0)
+    r = TestClient(app, raise_server_exceptions=False, cookies=admin.cookies).get("/catalog")
+    assert r.status_code == 500 and r.json()["error"]["code"] == "INTERNAL_ERROR"
+    assert "ZeroDivisionError" not in r.text  # details stay in the log
+    assert admin.get("/admin/stats").json()["server_errors_24h"] == 1
+    assert admin.get("/admin/events?kind=server_error").json()[0]["path"] == "/catalog"

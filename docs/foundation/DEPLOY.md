@@ -1,58 +1,78 @@
-# Deploying UnboxEd
+# Deploying UnboxEd to the VPS
 
-Three environments: **local** (your machine), **staging** (`staging.unboxlearning.in`) and **production**
-(`app.unboxlearning.in`). The marketing site stays at `unboxlearning.in` (see `site/README.md`).
-Never develop against production.
+| Environment | Address | What it's for |
+|---|---|---|
+| local | http://localhost:3010 | coding, tests (`docker compose up --build` or the three dev commands in README) |
+| **staging** | https://staging.unboxlearning.in | try every change here first; its own database and files |
+| **production** | https://app.unboxlearning.in | real users |
+| site | https://unboxlearning.in | marketing site; its sign-up/log-in forms talk to production |
 
-## One-time server setup (Ubuntu VPS, alongside the site's nginx)
+Both app environments run on the same VPS as Docker Compose stacks (`unboxed-staging`, `unboxed-production`). Each
+has its own Postgres, file volume and secrets. The host's nginx terminates HTTPS and forwards to them:
+`/api/*` to the API, everything else to the web app.
 
-```bash
-sudo apt install -y postgresql nginx python3.12-venv nodejs certbot python3-certbot-nginx
-sudo useradd --system --create-home unboxed
-sudo -u postgres psql -c "CREATE ROLE unboxed LOGIN PASSWORD '<strong password>'" -c "CREATE DATABASE unboxed OWNER unboxed"
-sudo mkdir -p /srv/unboxed/releases /etc/unboxed /var/lib/unboxed/storage && sudo chown -R unboxed /srv/unboxed /var/lib/unboxed
-sudo -u unboxed python3.12 -m venv /srv/unboxed/venv
-```
+## Step 1: DNS (at your domain registrar)
 
-`/etc/unboxed/production.env` (mode 600, owned by root):
+Add these records for `unboxlearning.in`. "Name" is sometimes called "Host".
 
-```
-ENVIRONMENT=production
-DATABASE_URL=postgresql+psycopg://unboxed:<strong password>@localhost:5432/unboxed
-APP_URL=https://app.unboxlearning.in
-SITE_URL=https://unboxlearning.in
-SECRET_KEY=<48+ random characters>
-COOKIE_DOMAIN=.unboxlearning.in
-COOKIE_SECURE=true
-REQUIRE_EMAIL_VERIFICATION=false
-STORAGE_DIR=/var/lib/unboxed/storage
-SMTP_HOST=… SMTP_USER=… SMTP_PASSWORD=… SMTP_FROM=UnboxEd <no-reply@unboxlearning.in>
-```
+| Type | Name | Value | TTL |
+|---|---|---|---|
+| A | `app` | your VPS's IPv4 address | 3600 (or the default) |
+| A | `staging` | your VPS's IPv4 address | 3600 |
+| AAAA | `app`, `staging` | the VPS's IPv6 address *(only if it has one)* | 3600 |
 
-The API refuses to start in staging/production if `SECRET_KEY` is weak, `COOKIE_SECURE` is off, or the database
-still uses the development password.
+Check them from your laptop: `nslookup app.unboxlearning.in` should return the VPS address. This can take from a
+few minutes to a couple of hours. Add the email provider's records at the same time (see EMAIL_AND_GOOGLE.md).
 
-Then install `deploy/systemd/*.service` into `/etc/systemd/system/`, `sudo systemctl enable unboxed-api
-unboxed-worker unboxed-web`, and the nginx file `deploy/nginx-app.conf` (then `certbot --nginx -d app.unboxlearning.in`).
+## Step 2: one-time server setup
 
-For **staging**, repeat with `/srv/unboxed-staging`, a separate `unboxed_staging` database,
-`/etc/unboxed/staging.env` (with its own `SECRET_KEY`, `APP_URL=https://staging.unboxlearning.in`) and copies
-of the service files named `unboxed-*-staging` on other ports (e.g. 8041/3011).
-
-## Each release
+Requirements: Ubuntu 22.04/24.04 (or Debian 12) with **at least 2 GB RAM** (4 GB is comfortable for both
+environments and image builds), and an SSH user with sudo.
 
 ```bash
-SSH_TARGET=ubuntu@<server> TARGET=staging ./deploy/deploy-app.sh     # try it on staging first
-SSH_TARGET=ubuntu@<server> ./deploy/deploy-app.sh                    # then production
-cd site && SSH_TARGET=ubuntu@<server> ./deploy/deploy.sh             # site: forms point at app.unboxlearning.in
+ssh <user>@<vps-ip>
+curl -fsSL https://raw.githubusercontent.com/preeti-mlverse/unboxlearning/main/deploy/server-setup.sh -o setup.sh
+sudo bash setup.sh <your-email-for-certificate-notices>
 ```
 
-The release script runs the tests, builds the app, uploads a timestamped release, runs `alembic upgrade head`,
-switches the `current` symlink and restarts the services. The last five releases are kept for rollback
-(re-point `current` and restart).
+This installs Docker, nginx and certbot, clones the repo to `/srv/unboxed`, writes `/etc/unboxed/staging.env` and
+`/etc/unboxed/production.env` with fresh random secrets, sets up both nginx sites with HTTPS, and schedules nightly
+database backups to `/var/backups/unboxed` (14 days kept).
 
-## Checks after a release
-- `https://app.unboxlearning.in/api/health` → `{"status":"ok", …}`, including counts of stuck and failed jobs.
-- `journalctl -u unboxed-api -f` shows JSON lines with `request_id`, `user_id`, path, status and duration. The
-  same `request_id` appears in any error a user sees ("Reference: …").
-- Admin → Failed jobs should be empty.
+Then fill in email (and optionally Google) in both env files, as described in EMAIL_AND_GOOGLE.md.
+
+If unboxlearning.in (the site) isn't on this server yet, `site/deploy/server-setup.sh` prepares it. Then deploy
+the site with `site/deploy/deploy.sh`.
+
+## Step 3: each release (from your laptop)
+
+```bash
+git push                                                               # the server deploys what's on GitHub
+SSH_TARGET=<user>@<vps-ip> ./deploy/deploy-app.sh                      # staging (default)
+SSH_TARGET=<user>@<vps-ip> TARGET=production ./deploy/deploy-app.sh    # production (runs the tests first)
+cd site && SSH_TARGET=<user>@<vps-ip> ./deploy/deploy.sh               # the marketing site, if it changed
+```
+
+The server checks out that exact commit and rebuilds the images. The API applies any new database migrations
+before it starts. The script then waits for `https://<host>/api/health`.
+
+**Roll back:** `REF=<older commit sha> SSH_TARGET=… TARGET=production ./deploy/deploy-app.sh`. Migrations only
+move forward, so to undo a schema change, write a new migration.
+
+## Looking after it
+
+```bash
+cd /srv/unboxed
+C="sudo docker compose -p unboxed-production -f docker-compose.prod.yml --env-file /etc/unboxed/production.env"
+$C ps                       # are the four services up?
+$C logs -f api              # JSON lines: request_id, user_id, path, status, duration
+$C logs -f worker           # background jobs
+$C exec db psql -U unboxed  # the database
+sudo unboxed-backup         # take a backup now
+```
+
+- Health: `https://app.unboxlearning.in/api/health` (database, stuck jobs, failed jobs in the last 24h).
+- Admin → the counters (server errors, uploads refused or failed) and the **Errors & uploads** tab. Each row's
+  reference matches `request_id` in the API logs.
+- Make the first platform admin, after signing up normally:
+  `$C exec db psql -U unboxed -c "update users set is_platform_admin = true where email = 'you@example.com'"`

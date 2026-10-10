@@ -2,14 +2,14 @@
 // A deliberately plain platform admin view: users, organizations, courses, jobs and failed jobs.
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { AdminOrg, AdminStats, AdminUser, CourseSummary, Job } from "@shared/index";
+import type { AdminOrg, AdminStats, AdminUser, CourseSummary, Job, SystemEvent } from "@shared/index";
 
 import { Alert, Button, Card, ErrorState, Loading, PageHeader, StatusBadge, cx } from "@/components/ui";
 import { ApiError, post } from "@/lib/api";
 import { timeAgo, useApi } from "@/lib/hooks";
 import { useSession } from "@/lib/session";
 
-const TABS = ["Users", "Organizations", "Courses", "Jobs", "Failed jobs"] as const;
+const TABS = ["Users", "Organizations", "Courses", "Jobs", "Failed jobs", "Errors & uploads"] as const;
 type Tab = (typeof TABS)[number];
 
 function Table({ head, rows }: { head: string[]; rows: React.ReactNode[][] }) {
@@ -34,7 +34,7 @@ export default function AdminPage() {
   useEffect(() => { if (me && !me.is_platform_admin) router.replace("/unauthorized"); }, [me, router]);
   const stats = useApi<AdminStats>(me?.is_platform_admin ? "/admin/stats" : null);
   const path = { Users: "/admin/users", Organizations: "/admin/organizations", Courses: "/admin/courses?include_deleted=true",
-                 Jobs: "/admin/jobs", "Failed jobs": "/admin/jobs?status=failed" }[tab];
+                 Jobs: "/admin/jobs", "Failed jobs": "/admin/jobs?status=failed", "Errors & uploads": "/admin/events" }[tab];
   const list = useApi<unknown[]>(me?.is_platform_admin ? path : null);
   if (!me?.is_platform_admin) return null;
 
@@ -59,6 +59,14 @@ export default function AdminPage() {
     body = <Table head={["Course", "Status", "Lessons", "Updated", ""]} rows={(list.data as CourseSummary[]).map((c) => [
       <b key="t">{c.title}</b>, c.deleted_at ? <StatusBadge key="s" status="failed" label="Deleted" /> : <StatusBadge key="s" status={c.status} />, c.lesson_count, timeAgo(c.updated_at),
       c.deleted_at ? <Button key="r" size="sm" variant="ghost" onClick={() => act(() => post(`/admin/courses/${c.id}/restore`), `Restored “${c.title}”.`)}>Restore</Button> : null])} />;
+  } else if (tab === "Errors & uploads") {
+    const KIND: Record<string, [string, string]> = { server_error: ["failed", "Server error"], upload_rejected: ["review", "Upload refused"],
+                                                     upload_failed: ["failed", "Processing failed"] };
+    body = <Table head={["When", "What", "Code", "Details", "Reference"]} rows={(list.data as SystemEvent[]).map((e) => [
+      timeAgo(e.created_at), <StatusBadge key="k" status={KIND[e.kind]?.[0] ?? "archived"} label={KIND[e.kind]?.[1] ?? e.kind} />,
+      <span key="c" className="font-mono text-xs">{e.code}</span>,
+      <span key="m" className="line-clamp-2 max-w-sm text-xs">{e.message}{e.path ? ` (${e.path})` : ""}</span>,
+      <span key="r" className="font-mono text-xs text-muted">{e.request_id ?? "—"}</span>])} />;
   } else {
     body = <Table head={["Job", "Status", "For", "Attempts", "Created", "Error", ""]} rows={(list.data as Job[]).map((j) => [
       <span key="j" className="font-mono text-xs">{j.job_type}<br /><span className="text-muted">{j.id}</span></span>, <StatusBadge key="s" status={j.status} />,
@@ -73,9 +81,13 @@ export default function AdminPage() {
       <PageHeader eyebrow="Platform" title="Admin" />
       {s && (
         <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-          {[["Users", s.users], ["Workspaces", s.organizations], ["Courses", `${s.courses} (${s.published_courses} live)`], ["Enrollments", s.enrollments],
-            ["Documents", s.documents], ["Jobs waiting", s.jobs_pending], ["Jobs failed", s.jobs_failed]].map(([l, n]) => (
-            <Card key={l as string} className={cx("grid gap-0.5 p-4", l === "Jobs failed" && Number(n) > 0 && "border-bad/50")}>
+          {([["Users", s.users], ["Workspaces", s.organizations], ["Courses", `${s.courses} (${s.published_courses} live)`], ["Enrollments", s.enrollments],
+            ["Documents", s.documents], ["Jobs waiting", s.jobs_pending], ["Jobs failed", s.jobs_failed, true],
+            ["Server errors · 24h", `${s.server_errors_24h} (${s.server_errors_7d} in 7d)`, s.server_errors_24h > 0],
+            ["Uploads refused · 24h", s.uploads_rejected_24h],
+            ["Uploads failed · 24h", `${s.uploads_failed_24h} (${s.uploads_failed_7d} in 7d)`, s.uploads_failed_24h > 0],
+            ["Documents failed now", s.documents_failed, s.documents_failed > 0]] as [string, string | number, boolean?][]).map(([l, n, alarm]) => (
+            <Card key={l} className={cx("grid gap-0.5 p-4", alarm && Number(String(n).split(" ")[0]) > 0 && "border-bad/50 bg-bad-soft")}>
               <span className="eyebrow text-muted">{l}</span><span className="font-display text-2xl font-extrabold">{n}</span>
             </Card>
           ))}

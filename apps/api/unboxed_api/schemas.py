@@ -93,6 +93,10 @@ class EmailIn(BaseModel):
     email: EmailStr
 
 
+class CodeIn(BaseModel):
+    code: str = Field(pattern=r"^\s*\d{6}\s*$", description="The 6-digit code from the email")
+
+
 class TokenIn(BaseModel):
     token: str = Field(min_length=10, max_length=200)
 
@@ -138,6 +142,8 @@ class MeOut(BaseModel):
     email: str
     phone: str | None
     email_verified: bool
+    # when true, nothing but confirming the email works until email_verified is true
+    verification_required: bool = False
     is_platform_admin: bool
     profile: ProfileOut
     memberships: list[MembershipOut]
@@ -316,6 +322,7 @@ class PublishIn(BaseModel):
 # ---------------------------------------------------------------- documents
 class DocumentOut(Out):
     id: str
+    deleted_at: datetime | None = None
     organization_id: str
     course_id: str | None
     title: str
@@ -444,6 +451,24 @@ class AdminStats(BaseModel):
     documents: int
     jobs_pending: int
     jobs_failed: int
+    # last 24 hours (and last 7 days), from system_events
+    server_errors_24h: int = 0
+    server_errors_7d: int = 0
+    uploads_rejected_24h: int = 0
+    uploads_failed_24h: int = 0
+    uploads_failed_7d: int = 0
+    documents_failed: int = 0
+
+
+class SystemEventOut(Out):
+    id: str
+    kind: str
+    code: str
+    message: str | None
+    path: str | None
+    request_id: str | None
+    user_id: str | None
+    created_at: datetime
 
 
 class Page(BaseModel):

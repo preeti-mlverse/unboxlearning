@@ -57,6 +57,10 @@ export async function api<T>(path: string, opts: Options = {}, retried = false):
       location.assign(code === "SESSION_EXPIRED" ? `/session-expired?next=${next}` : `/login?next=${next}`);
     }
   }
+  if (res.status === 403 && code === "EMAIL_NOT_VERIFIED" && !opts.noRedirect && typeof window !== "undefined"
+      && location.pathname !== "/verify-email") {
+    location.assign("/verify-email");
+  }
   throw new ApiError(res.status, code, err?.message ?? "Something went wrong. Please try again.", err?.details,
                      err?.request_id);
 }

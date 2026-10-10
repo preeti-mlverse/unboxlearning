@@ -132,3 +132,15 @@ def test_failed_job_retry_endpoint(creator):
     r = creator.post(f"/jobs/{doc['job_id']}/retry")
     assert r.status_code == 200 and r.json()["status"] == "pending"
     assert creator.get(f"/documents/{doc['id']}").json()["processing_status"] == "queued"
+
+
+def test_deleted_documents_can_be_restored(app, creator):
+    doc = upload(creator, "handbook.pdf", tiny_pdf()).json()
+    creator.delete(f"/documents/{doc['id']}")
+    deleted = creator.get("/documents?deleted=true").json()
+    assert [d["id"] for d in deleted] == [doc["id"]] and deleted[0]["deleted_at"]
+    outsider = signup(app, "educator")
+    assert outsider.post(f"/documents/{doc['id']}/restore").status_code == 404
+    assert creator.post(f"/documents/{doc['id']}/restore").json()["deleted_at"] is None
+    assert [d["id"] for d in creator.get("/documents").json()] == [doc["id"]]
+    assert creator.get("/documents?deleted=true").json() == []

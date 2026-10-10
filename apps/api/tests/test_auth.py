@@ -108,13 +108,6 @@ def test_login_rate_limit(app, client):
     assert codes[-1] == 429
 
 
-def test_require_email_verification(app, monkeypatch):
-    signup(app, "learner", email="ravi@example.com")
-    monkeypatch.setattr(get_settings(), "require_email_verification", True)
-    r = TestClient(app).post("/auth/login", json={"identifier": "ravi@example.com", "password": PASSWORD})
-    assert r.status_code == 403 and r.json()["error"]["code"] == "EMAIL_NOT_VERIFIED"
-
-
 def test_profile_update(learner):
     r = learner.patch("/users/me", json={"display_name": "Ravi K", "preferred_language": "hi"})
     assert r.json()["profile"]["display_name"] == "Ravi K" and r.json()["profile"]["preferred_language"] == "hi"

@@ -1,0 +1,54 @@
+# Staging and production on the VPS. One stack per environment, each with its own database and file volume:
+#
+#   docker compose -p unboxed-production -f docker-compose.prod.yml --env-file /etc/unboxed/production.env up -d --build
+#   docker compose -p unboxed-staging    -f docker-compose.prod.yml --env-file /etc/unboxed/staging.env    up -d --build
+#
+# The env file (created by deploy/server-setup.sh, never in git) supplies the secrets and the two local ports that
+# nginx forwards to: API_PORT for /api/*, WEB_PORT for everything else. Nothing listens on a public interface.
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: unboxed
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in the env file}
+      POSTGRES_DB: unboxed
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unboxed"]
+      interval: 5s
+      retries: 30
+
+  api:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    restart: unless-stopped
+    env_file: ${ENV_FILE:?set ENV_FILE to the env file path}
+    environment: &apienv
+      DATABASE_URL: postgresql+psycopg://unboxed:${DB_PASSWORD}@db:5432/unboxed
+      STORAGE_DIR: /data/storage
+    volumes: [storage:/data/storage]
+    ports: ["127.0.0.1:${API_PORT:?set API_PORT}:8040"]
+    depends_on: { db: { condition: service_healthy } }
+    command: ["sh", "-c", "python -m alembic -c database/alembic.ini upgrade head && uvicorn unboxed_api.main:app --host 0.0.0.0 --port 8040 --workers 2 --proxy-headers --forwarded-allow-ips='*'"]
+
+  worker:
+    build: { context: ., dockerfile: apps/api/Dockerfile }
+    restart: unless-stopped
+    env_file: ${ENV_FILE}
+    environment: *apienv
+    volumes: [storage:/data/storage]
+    depends_on: [api]
+    command: ["python", "-m", "workers.worker"]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args: { API_URL: "http://api:8040", NEXT_PUBLIC_SITE_URL: "${SITE_URL:?set SITE_URL}" }
+    restart: unless-stopped
+    ports: ["127.0.0.1:${WEB_PORT:?set WEB_PORT}:3010"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  storage:

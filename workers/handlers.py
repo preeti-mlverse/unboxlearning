@@ -11,6 +11,7 @@ from pypdf.errors import PdfReadError
 from unboxed_api.db import utcnow
 from unboxed_api.enums import DocumentStatus
 from unboxed_api.models import Document
+from unboxed_api.services import events
 from unboxed_api.services.jobs import PermanentError, handler, on_failure
 from unboxed_api.services.storage import get_storage
 
@@ -55,3 +56,5 @@ def inspect_failed(db, job):
     if doc:
         doc.processing_status = DocumentStatus.FAILED
         doc.error = (job.error or "").split(": ", 1)[-1][:500]
+        events.record(events.UPLOAD_FAILED, "DOCUMENT_PROCESSING_FAILED", f"{doc.original_filename}: {doc.error}",
+                      user_id=doc.uploaded_by)

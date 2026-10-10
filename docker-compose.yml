@@ -1,6 +1,6 @@
 # Local stack in containers, for anyone without Postgres/Python/Node installed:
 #   docker compose up --build        → app on http://localhost:3010, API on http://localhost:8040
-# The API container runs migrations on start. Seed data: docker compose exec api python /repo/database/seeds/seed.py
+# The API container runs migrations on start. Seed data: docker compose exec api python database/seeds/seed.py
 services:
   db:
     image: postgres:17
@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: unboxed
       POSTGRES_PASSWORD: unboxed_dev
       POSTGRES_DB: unboxed
-    ports: ["5433:5432"]
+    # not published to the host; use: docker compose exec db psql -U unboxed
     volumes: [pgdata:/var/lib/postgresql/data]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U unboxed"]
@@ -34,9 +34,10 @@ services:
     depends_on: [api]
 
   web:
-    build: { context: ., dockerfile: apps/web/Dockerfile }
-    environment:
-      API_URL: http://api:8040
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args: { API_URL: "http://api:8040", NEXT_PUBLIC_SITE_URL: "http://localhost:5195" }
     ports: ["3010:3010"]
     depends_on: [api]
 

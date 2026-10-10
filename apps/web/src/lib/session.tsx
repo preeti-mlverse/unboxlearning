@@ -70,3 +70,6 @@ export function useSession(): Session {
 }
 
 export const HOME: Record<Me["home"], string> = { create: "/create", learn: "/learn", onboarding: "/onboarding", admin: "/admin" };
+
+/** Where someone should land after signing in: the code screen first if their email must be confirmed. */
+export const landing = (me: Me) => (me.verification_required && !me.email_verified ? "/verify-email" : HOME[me.home]);

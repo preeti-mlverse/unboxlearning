@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import type { DocumentT } from "@shared/index";
 
 import { DocumentRow, Uploader, openDocument, useDocumentPolling } from "@/components/documents";
-import { Alert, Card, EmptyState, ErrorState, Loading, PageHeader } from "@/components/ui";
+import { Alert, Button, Card, EmptyState, ErrorState, Loading, PageHeader } from "@/components/ui";
 import { ApiError, del, post } from "@/lib/api";
-import { useApi } from "@/lib/hooks";
+import { timeAgo, useApi } from "@/lib/hooks";
 import { useSession } from "@/lib/session";
 
 export default function DocumentsPage() {
@@ -17,10 +17,12 @@ export default function DocumentsPage() {
   const org = workspace?.organization_id;
   const docs = useApi<DocumentT[]>(org ? `/documents?organization_id=${org}${query ? `&q=${encodeURIComponent(query)}` : ""}` : null);
   useDocumentPolling(docs.data, docs.reload);
+  const trash = useApi<DocumentT[]>(org ? `/documents?organization_id=${org}&deleted=true` : null);
 
   const act = async (fn: () => Promise<unknown>) => {
     setError(null);
-    try { await fn(); await docs.reload(true); } catch (e) { setError(e instanceof ApiError ? e.message : "Something went wrong."); }
+    try { await fn(); await docs.reload(true); await trash.reload(true); }
+    catch (e) { setError(e instanceof ApiError ? e.message : "Something went wrong."); }
   };
 
   return (
@@ -49,6 +51,20 @@ export default function DocumentsPage() {
               </ul>
             </Card>
           )}
+        {(trash.data?.length ?? 0) > 0 && (
+          <details className="rounded-[22px] border-2 border-line bg-surface">
+            <summary className="cursor-pointer px-5 py-3.5 font-bold">Recently deleted ({trash.data!.length})</summary>
+            <ul className="divide-y-2 divide-line border-t-2 border-line">
+              {trash.data!.map((d) => (
+                <li key={d.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
+                  <span className="grid"><span className="font-semibold">{d.title}</span>
+                    <span className="font-mono text-xs text-muted">{d.original_filename} · deleted {timeAgo(d.deleted_at)}</span></span>
+                  <Button size="sm" variant="ghost" onClick={() => act(() => post(`/documents/${d.id}/restore`))}>Restore</Button>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
       </div>
     </>
   );

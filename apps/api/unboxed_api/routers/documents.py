@@ -26,8 +26,10 @@ async def upload(me: Me, db: DB, file: UploadFile = File(...), organization_id: 
 
 @router.get("/documents", response_model=list[DocumentOut])
 def list_documents(me: Me, db: DB, q: str | None = Query(None, max_length=200), course_id: str | None = None,
-                   purpose: DocumentPurpose | None = None, organization_id: str | None = None):
-    return svc.list_docs(db, me, q=q, course_id=course_id, purpose=purpose, organization_id=organization_id)
+                   purpose: DocumentPurpose | None = None, organization_id: str | None = None, deleted: bool = False):
+    """Documents in your workspaces. `?deleted=true` lists recently deleted ones (they can be restored)."""
+    return svc.list_docs(db, me, q=q, course_id=course_id, purpose=purpose, organization_id=organization_id,
+                         deleted=deleted)
 
 
 @router.get("/documents/{doc_id}", response_model=DocumentOut)
@@ -44,6 +46,11 @@ def update_document(doc_id: str, data: DocumentUpdate, me: Me, db: DB):
 def delete_document(doc_id: str, me: Me, db: DB):
     svc.delete(db, me, doc_id)
     return Response(status_code=204)
+
+
+@router.post("/documents/{doc_id}/restore", response_model=DocumentOut)
+def restore_document(doc_id: str, me: Me, db: DB):
+    return svc.restore(db, me, doc_id)
 
 
 @router.post("/documents/{doc_id}/download-url", response_model=SignedUrlOut)

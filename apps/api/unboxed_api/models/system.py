@@ -37,3 +37,18 @@ class Job(Base):
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
+
+
+class SystemEvent(Base):
+    """Things worth counting on the admin page: server errors and rejected or failed uploads."""
+    __tablename__ = "system_events"
+    __table_args__ = (Index("ix_system_events_kind_time", "kind", "created_at"),)
+
+    id: Mapped[str] = id_column("evt")
+    kind: Mapped[str] = mapped_column(String(30))  # server_error | upload_rejected | upload_failed
+    code: Mapped[str] = mapped_column(String(60))
+    message: Mapped[str | None] = mapped_column(Text)
+    path: Mapped[str | None] = mapped_column(String(300))
+    request_id: Mapped[str | None] = mapped_column(String(40))
+    user_id: Mapped[str | None] = mapped_column(String(40))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, server_default=func.now())

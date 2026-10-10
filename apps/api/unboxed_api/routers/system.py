@@ -8,8 +8,9 @@ from ..db import utcnow
 from ..deps import DB, Admin, Me
 from ..enums import CourseStatus, JobStatus, UserStatus
 from ..errors import AppError, bad_request, not_found
-from ..models import Course, Document, Enrollment, Job, Membership, Organization, User
-from ..schemas import AdminOrgOut, AdminStats, AdminUserOut, CourseSummary, JobOut, Ok
+from ..models import Course, Document, Enrollment, Job, Membership, Organization, SystemEvent, User
+from ..schemas import AdminOrgOut, AdminStats, AdminUserOut, CourseSummary, JobOut, Ok, SystemEventOut
+from ..services import events as ev
 from ..services import courses as course_svc
 from ..services import jobs as job_svc
 from ..services.permissions import P
@@ -65,7 +66,26 @@ def stats(_: Admin, db: DB):
         enrollments=count(select(func.count(Enrollment.id))),
         documents=count(select(func.count(Document.id)).where(Document.deleted_at.is_(None))),
         jobs_pending=count(select(func.count(Job.id)).where(Job.status.in_([JobStatus.PENDING, JobStatus.RUNNING]))),
-        jobs_failed=count(select(func.count(Job.id)).where(Job.status == JobStatus.FAILED)))
+        jobs_failed=count(select(func.count(Job.id)).where(Job.status == JobStatus.FAILED)),
+        server_errors_24h=count(_since(ev.SERVER_ERROR, 1)), server_errors_7d=count(_since(ev.SERVER_ERROR, 7)),
+        uploads_rejected_24h=count(_since(ev.UPLOAD_REJECTED, 1)),
+        uploads_failed_24h=count(_since(ev.UPLOAD_FAILED, 1)), uploads_failed_7d=count(_since(ev.UPLOAD_FAILED, 7)),
+        documents_failed=count(select(func.count(Document.id)).where(Document.processing_status == "failed",
+                                                                     Document.deleted_at.is_(None))))
+
+
+def _since(kind: str, days: int):
+    return select(func.count(SystemEvent.id)).where(SystemEvent.kind == kind,
+                                                    SystemEvent.created_at > utcnow() - timedelta(days=days))
+
+
+@admin.get("/events", response_model=list[SystemEventOut])
+def recent_events(_: Admin, db: DB, kind: str | None = Query(None, max_length=30), limit: int = Query(100, le=500)):
+    """Recent server errors and upload problems, newest first. The request ID links each one to the logs."""
+    stmt = select(SystemEvent)
+    if kind:
+        stmt = stmt.where(SystemEvent.kind == kind)
+    return db.scalars(stmt.order_by(SystemEvent.created_at.desc()).limit(limit)).all()
 
 
 @admin.get("/users", response_model=list[AdminUserOut])

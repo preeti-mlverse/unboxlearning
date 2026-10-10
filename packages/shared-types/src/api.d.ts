@@ -38,6 +38,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Providers
+         * @description Which extra sign-in options are switched on (the app and site show buttons only for these).
+         */
+        get: operations["providers_auth_providers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/auth/refresh": {
         parameters: {
             query?: never;
@@ -100,6 +120,26 @@ export interface paths {
         put?: never;
         /** Verify Email */
         post: operations["verify_email_auth_verify_email_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/verify-email-code": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify Email Code
+         * @description Confirm the signed-in person's email with the 6-digit code from their inbox.
+         */
+        post: operations["verify_email_code_auth_verify_email_code_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -686,7 +726,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List Documents */
+        /**
+         * List Documents
+         * @description Documents in your workspaces. `?deleted=true` lists recently deleted ones (they can be restored).
+         */
         get: operations["list_documents_documents_get"];
         put?: never;
         /**
@@ -717,6 +760,23 @@ export interface paths {
         head?: never;
         /** Update Document */
         patch: operations["update_document_documents__doc_id__patch"];
+        trace?: never;
+    };
+    "/documents/{doc_id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Restore Document */
+        post: operations["restore_document_documents__doc_id__restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/documents/{doc_id}/download-url": {
@@ -802,6 +862,26 @@ export interface paths {
         };
         /** Stats */
         get: operations["stats_admin_stats_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Recent Events
+         * @description Recent server errors and upload problems, newest first. The request ID links each one to the logs.
+         */
+        get: operations["recent_events_admin_events_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -981,6 +1061,36 @@ export interface components {
             jobs_pending: number;
             /** Jobs Failed */
             jobs_failed: number;
+            /**
+             * Server Errors 24H
+             * @default 0
+             */
+            server_errors_24h: number;
+            /**
+             * Server Errors 7D
+             * @default 0
+             */
+            server_errors_7d: number;
+            /**
+             * Uploads Rejected 24H
+             * @default 0
+             */
+            uploads_rejected_24h: number;
+            /**
+             * Uploads Failed 24H
+             * @default 0
+             */
+            uploads_failed_24h: number;
+            /**
+             * Uploads Failed 7D
+             * @default 0
+             */
+            uploads_failed_7d: number;
+            /**
+             * Documents Failed
+             * @default 0
+             */
+            documents_failed: number;
         };
         /** AdminUserOut */
         AdminUserOut: {
@@ -1078,6 +1188,14 @@ export interface components {
             current_password: string;
             /** New Password */
             new_password: string;
+        };
+        /** CodeIn */
+        CodeIn: {
+            /**
+             * Code
+             * @description The 6-digit code from the email
+             */
+            code: string;
         };
         /** CourseCreate */
         CourseCreate: {
@@ -1212,6 +1330,8 @@ export interface components {
         DocumentOut: {
             /** Id */
             id: string;
+            /** Deleted At */
+            deleted_at?: string | null;
             /** Organization Id */
             organization_id: string;
             /** Course Id */
@@ -1527,6 +1647,11 @@ export interface components {
             phone: string | null;
             /** Email Verified */
             email_verified: boolean;
+            /**
+             * Verification Required
+             * @default false
+             */
+            verification_required: boolean;
             /** Is Platform Admin */
             is_platform_admin: boolean;
             profile: components["schemas"]["ProfileOut"];
@@ -1733,6 +1858,28 @@ export interface components {
             /** Agree */
             agree: boolean;
         };
+        /** SystemEventOut */
+        SystemEventOut: {
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Code */
+            code: string;
+            /** Message */
+            message: string | null;
+            /** Path */
+            path: string | null;
+            /** Request Id */
+            request_id: string | null;
+            /** User Id */
+            user_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** TokenIn */
         TokenIn: {
             /** Token */
@@ -1856,6 +2003,26 @@ export interface operations {
             };
         };
     };
+    providers_auth_providers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     refresh_auth_refresh_post: {
         parameters: {
             query?: never;
@@ -1926,6 +2093,39 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["TokenIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Ok"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_email_code_auth_verify_email_code_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CodeIn"];
             };
         };
         responses: {
@@ -3303,6 +3503,7 @@ export interface operations {
                 course_id?: string | null;
                 purpose?: components["schemas"]["DocumentPurpose"] | null;
                 organization_id?: string | null;
+                deleted?: boolean;
             };
             header?: never;
             path?: never;
@@ -3458,6 +3659,37 @@ export interface operations {
             };
         };
     };
+    restore_document_documents__doc_id__restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                doc_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     download_url_documents__doc_id__download_url_post: {
         parameters: {
             query?: never;
@@ -3587,6 +3819,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminStats"];
+                };
+            };
+        };
+    };
+    recent_events_admin_events_get: {
+        parameters: {
+            query?: {
+                kind?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SystemEventOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

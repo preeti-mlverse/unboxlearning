@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from: str = "UnboxEd <no-reply@unboxlearning.in>"
 
+    # Sign in with Google: off until both are set
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    oauth_redirect_base: str = ""  # public URL of this API; defaults to APP_URL + "/api"
+
     # auth rate limit: attempts per window per IP + identifier
     auth_rate_limit: int = 10
     auth_rate_window_seconds: int = 300
@@ -55,6 +60,11 @@ class Settings(BaseSettings):
     @classmethod
     def no_empty_secret(cls, v: str) -> str:
         return v or DEV_SECRET  # an empty "SECRET_KEY=" line; check_production() still refuses it when deployed
+
+    @field_validator("oauth_redirect_base")
+    @classmethod
+    def default_redirect_base(cls, v: str, info) -> str:
+        return v or (info.data.get("app_url", "http://localhost:3010").rstrip("/") + "/api")
 
     @property
     def allowed_origins(self) -> list[str]:

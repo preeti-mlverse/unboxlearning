@@ -12,12 +12,14 @@ from ..enums import MembershipStatus, Role, TokenPurpose, UserStatus
 from ..errors import AppError, conflict
 from ..models import AuthSession, AuthToken, Membership, Organization, Profile, User
 from ..schemas import MembershipOut, MeOut, ProfileOut, SignupIn
-from ..security import (create_access_token, hash_password, needs_rehash, new_opaque_token, token_digest,
-                        verify_password)
+from ..security import (code_digest, create_access_token, hash_password, needs_rehash, new_code, new_opaque_token,
+                        token_digest, verify_password)
 from . import mailer, orgs
 from .permissions import Principal
 
 TOKEN_LIFETIME = {TokenPurpose.VERIFY_EMAIL: timedelta(hours=48), TokenPurpose.RESET_PASSWORD: timedelta(hours=1)}
+CODE_LIFETIME = timedelta(minutes=30)  # the typed code expires sooner than the link
+MAX_CODE_ATTEMPTS = 5
 
 
 def normalise_email(email: str) -> str:
@@ -43,12 +45,13 @@ def signup(db: Session, data: SignupIn) -> User:
     return user
 
 
-def issue_token(db: Session, user: User, purpose: TokenPurpose) -> str:
+def issue_token(db: Session, user: User, purpose: TokenPurpose, code: str | None = None) -> str:
     # an older unused token of the same kind stops working once a new one is issued
     db.execute(update(AuthToken).where(AuthToken.user_id == user.id, AuthToken.purpose == purpose,
                                        AuthToken.used_at.is_(None)).values(used_at=utcnow()))
     raw = new_opaque_token()
     db.add(AuthToken(user_id=user.id, purpose=purpose, token_hash=token_digest(raw),
+                     code_hash=code_digest(user.id, code) if code else None,
                      expires_at=utcnow() + TOKEN_LIFETIME[purpose]))
     db.flush()
     return raw
@@ -66,7 +69,30 @@ def consume_token(db: Session, raw: str, purpose: TokenPurpose) -> User:
 def send_verification(db: Session, user: User) -> None:
     if user.email_verified_at:
         return
-    mailer.verification_email(user.email, user.profile.display_name, issue_token(db, user, TokenPurpose.VERIFY_EMAIL))
+    code = new_code()
+    link_token = issue_token(db, user, TokenPurpose.VERIFY_EMAIL, code=code)
+    mailer.verification_email(user.email, user.profile.display_name, link_token, code)
+
+
+def verify_email_code(db: Session, user: User, code: str) -> User:
+    """Check the 6-digit code from the confirmation email. After five wrong tries the code stops working."""
+    if user.email_verified_at:
+        return user
+    tok = db.scalar(select(AuthToken).where(AuthToken.user_id == user.id, AuthToken.purpose == TokenPurpose.VERIFY_EMAIL,
+                                            AuthToken.used_at.is_(None)).order_by(AuthToken.created_at.desc()).limit(1))
+    if (tok is None or tok.code_hash is None or tok.created_at + CODE_LIFETIME < utcnow()
+            or tok.attempts >= MAX_CODE_ATTEMPTS):
+        raise AppError(400, "CODE_EXPIRED", "This code has expired. Send yourself a new one.")
+    if tok.code_hash != code_digest(user.id, code.strip()):
+        tok.attempts += 1
+        left = MAX_CODE_ATTEMPTS - tok.attempts
+        db.commit()  # keep the count even though this request ends in an error
+        if left <= 0:
+            raise AppError(400, "CODE_EXPIRED", "Too many wrong tries. Send yourself a new code.")
+        raise AppError(400, "CODE_WRONG", f"That code isn't right. {left} {'try' if left == 1 else 'tries'} left.")
+    tok.used_at = utcnow()
+    user.email_verified_at = utcnow()
+    return user
 
 
 def verify_email(db: Session, raw: str) -> User:
@@ -110,8 +136,6 @@ def authenticate(db: Session, identifier: str, password: str) -> User:
         raise AppError(401, "INVALID_CREDENTIALS", "That email/mobile and password don't match.")
     if user.status != UserStatus.ACTIVE:
         raise AppError(403, "ACCOUNT_DISABLED", "This account isn't active. Contact support if you think this is wrong.")
-    if get_settings().require_email_verification and not user.email_verified_at:
-        raise AppError(403, "EMAIL_NOT_VERIFIED", "Please confirm your email first. We've sent you a link.")
     if needs_rehash(user.password_hash):
         user.password_hash = hash_password(password)
     user.last_login_at = utcnow()
@@ -208,6 +232,7 @@ def me(db: Session, principal: Principal) -> MeOut:
     else:
         home = "learn"
     return MeOut(id=user.id, email=user.email, phone=user.phone, email_verified=user.email_verified_at is not None,
+                 verification_required=get_settings().require_email_verification,
                  is_platform_admin=user.is_platform_admin, profile=ProfileOut.model_validate(user.profile),
                  memberships=memberships, home=home)
 
@@ -215,5 +240,9 @@ def me(db: Session, principal: Principal) -> MeOut:
 HOME_PATHS = {"create": "/create", "learn": "/learn", "onboarding": "/onboarding", "admin": "/admin"}
 
 
+def must_verify(me_out: MeOut) -> bool:
+    return me_out.verification_required and not me_out.email_verified
+
+
 def redirect_for(me_out: MeOut) -> str:
-    return get_settings().app_url + HOME_PATHS[me_out.home]
+    return get_settings().app_url + ("/verify-email" if must_verify(me_out) else HOME_PATHS[me_out.home])

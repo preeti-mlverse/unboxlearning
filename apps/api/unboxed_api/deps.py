@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 from sqlalchemy.orm import Session
 
+from .config import get_settings
 from .db import get_db
 from .enums import UserStatus
 from .errors import AppError
@@ -44,9 +45,16 @@ def optional_principal(request: Request, db: DB) -> Principal | None:
     return load_principal(db, user)
 
 
-def current_principal(principal: Annotated[Principal | None, Depends(optional_principal)]) -> Principal:
+# Until their email is confirmed (when that's required), people can only see who they are and use /auth.
+UNVERIFIED_ALLOWED = ("/users/me", "/auth/")
+
+
+def current_principal(request: Request, principal: Annotated[Principal | None, Depends(optional_principal)]) -> Principal:
     if principal is None:
         raise AppError(401, "UNAUTHENTICATED", "Please log in to continue.")
+    if (get_settings().require_email_verification and not principal.user.email_verified_at
+            and not principal.is_admin and not request.url.path.startswith(UNVERIFIED_ALLOWED)):
+        raise AppError(403, "EMAIL_NOT_VERIFIED", "Confirm your email to continue. We've sent you a code.")
     return principal
 
 

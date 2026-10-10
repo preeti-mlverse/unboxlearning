@@ -39,6 +39,16 @@ def token_digest(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 
+def new_code() -> str:
+    """A 6-digit one-time code for people to type in (leading zeros allowed)."""
+    return f"{secrets.randbelow(1_000_000):06d}"
+
+
+def code_digest(user_id: str, code: str) -> str:
+    # keyed by the user and the server secret, so a leaked table can't be brute-forced offline
+    return hmac.new(get_settings().secret_key.encode(), f"{user_id}:{code}".encode(), hashlib.sha256).hexdigest()
+
+
 def create_access_token(user_id: str, session_id: str) -> tuple[str, datetime]:
     s = get_settings()
     exp = datetime.now(timezone.utc) + timedelta(minutes=s.access_token_minutes)

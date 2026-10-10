@@ -4,10 +4,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import type { AuthResult } from "@shared/index";
 
+import { GOOGLE_ERRORS, GoogleButton } from "@/components/GoogleButton";
 import { Alert, Button, Input } from "@/components/ui";
 import { ApiError, post } from "@/lib/api";
 import { fieldErrors, loginSchema, safeNext } from "@/lib/forms";
-import { HOME, useSession } from "@/lib/session";
+import { landing, useSession } from "@/lib/session";
 
 function LoginForm() {
   const params = useSearchParams();
@@ -29,7 +30,8 @@ function LoginForm() {
     try {
       const res = await post<AuthResult>("/auth/login", parsed.data);
       await reload();
-      router.replace(safeNext(params.get("next")) ?? HOME[res.user.home]);
+      const verify = res.user.verification_required && !res.user.email_verified;
+      router.replace(verify ? "/verify-email" : safeNext(params.get("next")) ?? landing(res.user));
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong.");
       setBusy(false);
@@ -44,7 +46,9 @@ function LoginForm() {
       </div>
       {params.get("bye") && <Alert tone="good">You&apos;re logged out.</Alert>}
       {params.get("reset") && <Alert tone="good">Password changed. Log in with your new one.</Alert>}
+      {params.get("error") && <Alert tone="bad">{GOOGLE_ERRORS[params.get("error")!] ?? "That sign-in didn't work. Please try again."}</Alert>}
       {error && <Alert tone="bad">{error}</Alert>}
+      <GoogleButton next={safeNext(params.get("next"))} />
       <Input label="Email or mobile" name="identifier" autoComplete="username" placeholder="you@example.com or 98765 43210"
              value={form.identifier} error={errors.identifier} onChange={(e) => setForm({ ...form, identifier: e.target.value })} autoFocus />
       <div className="relative">

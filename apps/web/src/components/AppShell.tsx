@@ -41,11 +41,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [resent, setResent] = useState(false);
 
+  const mustVerify = Boolean(me && me.verification_required && !me.email_verified);
   useEffect(() => {
     if (!loading && !me) router.replace(`/login?next=${encodeURIComponent(path)}`);
-  }, [loading, me, router, path]);
+    else if (mustVerify) router.replace("/verify-email");
+  }, [loading, me, router, path, mustVerify]);
 
-  if (loading || !me) return <Loading label="Opening UnboxEd…" />;
+  if (loading || !me || mustVerify) return <Loading label="Opening UnboxEd…" />;
   const isCreator = creatorWorkspaces.length > 0;
   const close = () => setOpen(false);
 
@@ -98,12 +100,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
       {open && <div id="mobile-nav" className="fixed inset-x-0 bottom-0 top-[56px] z-20 bg-uv lg:hidden">{sidebar}</div>}
       <main id="main" className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
-        {!me.email_verified && (
+        {!me.email_verified && !me.is_platform_admin && (
           <div className="mb-6">
             <Alert tone="warn" title="Confirm your email"
                    action={resent ? <span className="text-sm font-bold">Sent. Check your inbox.</span>
                                   : <Button size="sm" variant="ghost" onClick={async () => { await post("/auth/resend-verification"); setResent(true); }}>Resend link</Button>}>
-              We sent a link to <b>{me.email}</b>. Confirming it lets us reach you about your account.
+              We sent a code to <b>{me.email}</b>. <Link className="underline" href="/verify-email">Enter it here</Link> so we can reach you about your account.
             </Alert>
           </div>
         )}

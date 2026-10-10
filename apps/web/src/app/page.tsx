@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { Loading } from "@/components/ui";
-import { HOME, useSession } from "@/lib/session";
+import { landing, useSession } from "@/lib/session";
 
 export default function Home() {
   const { me, loading } = useSession();
   const router = useRouter();
   useEffect(() => {
     if (loading) return;
-    router.replace(me ? HOME[me.home] : "/login");
+    router.replace(me ? landing(me) : "/login");
   }, [me, loading, router]);
   return <Loading label="Opening UnboxEd…" />;
 }

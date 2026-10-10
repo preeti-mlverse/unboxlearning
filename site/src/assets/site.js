@@ -413,6 +413,29 @@
     document.querySelectorAll('header a[href="/signup/"]').forEach(function (a) { a.hidden = true; });
   }
 
+  // "Continue with Google" appears only when the API says it's switched on.
+  var GOOGLE_SVG = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+  var addGoogle = function (anchor, roleFn) {
+    if (!AUTH_API || !anchor) return;
+    fetch(AUTH_API + "/auth/providers", { credentials: "include" }).then(function (r) { return r.json(); }).then(function (p) {
+      if (!p.google) return;
+      var a = document.createElement("a");
+      a.className = "btn btn-ghost btn-wide google-btn";
+      a.innerHTML = GOOGLE_SVG + " Continue with Google";
+      a.style.cssText = "justify-content:center;color:var(--ink);border-color:var(--line);background:var(--surface)";
+      a.href = AUTH_API + "/auth/google/start";
+      a.addEventListener("click", function () {
+        var role = roleFn && roleFn();
+        a.href = AUTH_API + "/auth/google/start" + (role ? "?role=" + encodeURIComponent(role) : "");
+      });
+      var or = document.createElement("p");
+      or.className = "auth-alt";
+      or.textContent = "or";
+      anchor.parentNode.insertBefore(a, anchor);
+      anchor.parentNode.insertBefore(or, anchor);
+    }).catch(function () {});
+  };
+
   document.querySelectorAll(".show-pass").forEach(function (b) {
     b.addEventListener("click", function () {
       var input = b.parentNode.querySelector("input");
@@ -448,6 +471,7 @@
       go(2);
     });
     form.querySelector("[data-back]").addEventListener("click", function () { go(1); });
+    addGoogle(document.getElementById("s-name") && document.getElementById("s-name").closest("label"), role);
 
     var pass = document.getElementById("s-pass"), meter = form.querySelector(".meter-pass i"), hint = document.getElementById("pass-hint");
     pass.addEventListener("input", function () {
@@ -509,6 +533,9 @@
   var login = document.getElementById("login-form"), reset = document.getElementById("reset-form");
   if (login) {
     var status = function (el, ok, msg) { el.hidden = false; el.className = "form-status " + (ok ? "ok" : "no"); el.innerHTML = msg; };
+    addGoogle(document.getElementById("l-id") && document.getElementById("l-id").closest("label"), null);
+    var gErr = new URLSearchParams(location.search).get("error");
+    if (gErr) status(document.getElementById("login-status"), false, "That Google sign-in didn't work. Please try again.");
     document.getElementById("to-reset").addEventListener("click", function () { login.hidden = true; reset.hidden = false; document.getElementById("r-email").focus(); });
     document.getElementById("to-login").addEventListener("click", function () { reset.hidden = true; login.hidden = false; document.getElementById("l-id").focus(); });
     login.addEventListener("submit", function (e) {
