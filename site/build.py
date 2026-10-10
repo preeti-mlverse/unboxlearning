@@ -30,6 +30,16 @@ EMAIL = "preeti.agrawal@lightbulblabs.tech"
 PHONE = "+91 70048 47355"
 PHONE_TEL = "+917004847355"
 
+# Where the product app and its API live. `python build.py` builds for local development;
+# `python build.py --env production` (used by deploy/deploy.sh) points the forms at the live app.
+ENVIRONMENTS = {
+    "local": {"app": "http://localhost:3010", "api": "http://localhost:8040"},
+    "staging": {"app": "https://staging.unboxlearning.in", "api": "https://staging.unboxlearning.in/api"},
+    "production": {"app": "https://app.unboxlearning.in", "api": "https://app.unboxlearning.in/api"},
+}
+ENV = sys.argv[sys.argv.index("--env") + 1] if "--env" in sys.argv else "local"
+APP = ENVIRONMENTS[ENV]
+
 NAV = [("how", "How it works", "/how-it-works/"), ("experience", "Experience", "/experience/"),
        ("educators", "For Educators", "/educators/"), ("learners", "For Learners", "/learners/"),
        ("organizations", "For Organizations", "/organizations/"), ("impact", "Impact", "/impact/"),
@@ -196,6 +206,7 @@ def page(meta: dict, body: str, url: str) -> str:
 {body}
 </main>
 {footer()}
+<script>window.UNBOX = Object.assign(window.UNBOX || {{}}, {{ AUTH_API: "{APP["api"]}", APP_URL: "{APP["app"]}" }});</script>
 <script src="/assets/site.js?v={asset_v("site.js")}" defer></script>
 </body>
 </html>

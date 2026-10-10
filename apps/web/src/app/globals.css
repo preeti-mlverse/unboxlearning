@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/* UnboxEd tokens: the same palette and type as unboxlearning.in */
+:root {
+  --violet: #4B32C8; --violet-deep: #3A25A6; --uv: #1B164B; --uv-2: #29245F;
+  --lavender: #ECE9FC; --coral: #E65F45; --mustard: #F2B900; --aqua: #7CC1CA; --blush: #FCEBE7;
+  --ground: #F6F4FD; --surface: #FFFFFF; --ink: #1B164B; --muted: #5E5880; --line: #E2DDF5;
+  --good: #1E9E78; --good-soft: #DDF5EC; --bad: #D8453A; --bad-soft: #FDE4E1; --warn-soft: #FFF1CC; --warn-ink: #7A5600;
+  --chip-ink: #C4452F;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #120C2E; --surface: #1E1746; --ink: #EFEBFF; --muted: #B3ABD8; --line: #342A6E;
+    --lavender: #2A2160; --blush: #3A2240; --violet: #8C78FF; --violet-deep: #6B55F0; --chip-ink: #FFB3A5;
+    --good-soft: #123D31; --bad-soft: #43201E; --warn-soft: #3D3210; --warn-ink: #F5D27A;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #120C2E; --surface: #1E1746; --ink: #EFEBFF; --muted: #B3ABD8; --line: #342A6E;
+  --lavender: #2A2160; --blush: #3A2240; --violet: #8C78FF; --violet-deep: #6B55F0; --chip-ink: #FFB3A5;
+  --good-soft: #123D31; --bad-soft: #43201E; --warn-soft: #3D3210; --warn-ink: #F5D27A;
+}
+
+@theme inline {
+  --color-violet: var(--violet);
+  --color-violet-deep: var(--violet-deep);
+  --color-uv: var(--uv);
+  --color-uv-2: var(--uv-2);
+  --color-lavender: var(--lavender);
+  --color-coral: var(--coral);
+  --color-mustard: var(--mustard);
+  --color-aqua: var(--aqua);
+  --color-blush: var(--blush);
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn-soft: var(--warn-soft);
+  --color-warn-ink: var(--warn-ink);
+  --color-chip-ink: var(--chip-ink);
+  --font-display: var(--font-bricolage), "Trebuchet MS", system-ui, sans-serif;
+  --font-sans: var(--font-figtree), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, Consolas, monospace;
+  --radius-card: 22px;
+}
+
+body { background: var(--ground); color: var(--ink); }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; text-wrap: balance; }
+:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; border-radius: 8px; }
+
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* the isometric-cube pattern from the site's dark sections */
+.cube-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 66L0 50V16L28 0l28 16v34L28 66zm0 32L0 82V66l28 16 28-16v16L28 98z' fill='none' stroke='%23fff' stroke-width='1.2'/%3E%3C/svg%3E");
+}
+
+/* lesson text */
+.prose-lesson p { margin: 0 0 1em; }
+.prose-lesson ul, .prose-lesson ol { margin: 0 0 1em; padding-left: 1.3em; }
+.prose-lesson ul { list-style: disc; } .prose-lesson ol { list-style: decimal; }
+.prose-lesson li { margin: .25em 0; }
+.prose-lesson a { color: var(--violet); text-decoration: underline; }
+.prose-lesson strong { font-weight: 700; }
+.prose-lesson code { font-family: var(--font-mono); background: var(--lavender); border-radius: 6px; padding: 1px 6px; font-size: .92em; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

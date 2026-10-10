@@ -4,7 +4,7 @@
   // Any endpoint that accepts a JSON POST works (for example a Formspree form URL).
   var FORM_ENDPOINT = "";
   var CONTACT_EMAIL = "preeti.agrawal@lightbulblabs.tech";
-  window.UNBOX = { FORM_ENDPOINT: FORM_ENDPOINT, CONTACT_EMAIL: CONTACT_EMAIL };
+  window.UNBOX = Object.assign(window.UNBOX || {}, { FORM_ENDPOINT: FORM_ENDPOINT, CONTACT_EMAIL: CONTACT_EMAIL });
 
   // ---------- mobile menu
   var nav = document.querySelector(".nav");
@@ -379,18 +379,39 @@
 })();
 
 // ---------- sign up / log in
-// AUTH_API: base URL of the account service (POST {AUTH_API}/signup, /login, /reset). Leave empty until accounts launch:
-// sign-up then registers early-access interest (via FORM_ENDPOINT, or the visitor's email app) and log-in explains that
-// sign-in opens with early access. Passwords are only ever sent to AUTH_API, never to a form service or an email.
+// The forms talk to the UnboxEd API (window.UNBOX.AUTH_API, set per environment by build.py). The session comes back
+// as HttpOnly cookies, then the visitor is sent into the app (window.UNBOX.APP_URL). Passwords only ever go to the API.
 (function () {
-  var AUTH_API = "";
-  var FORM_ENDPOINT = (window.UNBOX || {}).FORM_ENDPOINT || "";
-  var CONTACT_EMAIL = (window.UNBOX || {}).CONTACT_EMAIL || "preeti.agrawal@lightbulblabs.tech";
-  var post = function (url, data) {
-    return fetch(url, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(data) })
-      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json().catch(function () { return {}; }); });
+  var CFG = window.UNBOX || {};
+  var AUTH_API = (CFG.AUTH_API || "").replace(/\/$/, "");
+  var APP_URL = (CFG.APP_URL || "").replace(/\/$/, "");
+  var CONTACT_EMAIL = CFG.CONTACT_EMAIL || "preeti.agrawal@lightbulblabs.tech";
+  var esc = function (s) { return String(s).replace(/[<>&"]/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]; }); };
+  var post = function (path, data) {
+    return fetch(AUTH_API + path, { method: "POST", credentials: "include", headers: { "Content-Type": "application/json", Accept: "application/json" },
+                                    body: JSON.stringify(data) })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (body) {
+          if (r.ok) return body;
+          var e = new Error((body.error && body.error.message) || "Something went wrong.");
+          e.code = body.error && body.error.code;
+          e.fields = (body.error && body.error.details && body.error.details.fields) || {};
+          throw e;
+        });
+      }, function () {
+        var e = new Error("We couldn't reach UnboxEd. Check your connection and try again.");
+        e.code = "NETWORK"; e.fields = {};
+        throw e;
+      });
   };
   var invalid = function (el, bad) { el.setAttribute("aria-invalid", bad ? "true" : "false"); return bad; };
+  var signedIn = /(?:^|;\s*)ub_signed_in=1/.test(document.cookie);
+
+  // Already signed in (the app shares the cookie): turn "Log in" into a way back to the app.
+  if (signedIn && APP_URL) {
+    document.querySelectorAll('a[href="/login/"]').forEach(function (a) { a.href = APP_URL + "/"; a.textContent = "Go to my dashboard"; });
+    document.querySelectorAll('header a[href="/signup/"]').forEach(function (a) { a.hidden = true; });
+  }
 
   document.querySelectorAll(".show-pass").forEach(function (b) {
     b.addEventListener("click", function () {
@@ -413,12 +434,15 @@
       if (first && n > 1) first.focus();
     };
     var role = function () { var r = form.querySelector('input[name="role"]:checked'); return r ? r.value : ""; };
+    var orgWrap = document.getElementById("org-wrap");
+    var syncOrg = function () { orgWrap.hidden = role() === "learner"; };
     form.querySelectorAll('input[name="role"]').forEach(function (r) {
-      r.addEventListener("change", function () {
-        document.getElementById("err-role").hidden = true;
-        document.getElementById("org-wrap").hidden = role() === "learner";
-      });
+      r.addEventListener("change", function () { document.getElementById("err-role").hidden = true; syncOrg(); });
     });
+    // /signup/?role=educator (from "For educators" and similar pages) preselects the role
+    var preset = (new URLSearchParams(location.search).get("role") || "").replace(/[^a-z]/g, "");
+    var presetInput = preset && form.querySelector('input[name="role"][value="' + preset + '"]');
+    if (presetInput) { presetInput.checked = true; syncOrg(); }
     form.querySelector("[data-next]").addEventListener("click", function () {
       if (!role()) { document.getElementById("err-role").hidden = false; return; }
       go(2);
@@ -428,49 +452,56 @@
     var pass = document.getElementById("s-pass"), meter = form.querySelector(".meter-pass i"), hint = document.getElementById("pass-hint");
     pass.addEventListener("input", function () {
       var v = pass.value, score = 0;
-      if (v.length >= 8) score++; if (v.length >= 12) score++;
-      if (/[a-z]/i.test(v) && /\d/.test(v)) score++; if (/[^a-z0-9]/i.test(v)) score++;
+      if (v.length >= 8) score++;
+      if (v.length >= 12) score++;
+      if (/[a-z]/i.test(v) && /\d/.test(v)) score++;
+      if (/[^a-z0-9]/i.test(v)) score++;
       var lv = [["0%", "#E2DDF5", "At least 8 characters. Mix letters and numbers."], ["30%", "#D8453A", "Too easy to guess."],
         ["55%", "#F2B900", "Getting there. Add numbers or symbols."], ["80%", "#1E9E78", "Strong password."], ["100%", "#1E9E78", "Very strong password."]][v ? Math.max(1, score) : 0];
       meter.style.width = lv[0]; meter.style.background = lv[1]; hint.textContent = lv[2];
     });
 
+    var FIELD = { name: "s-name", email: "s-email", phone: "s-phone", org: "s-org", password: "s-pass", agree: "s-agree" };
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var err = document.getElementById("err-details"), msgs = [];
       var name = document.getElementById("s-name"), email = document.getElementById("s-email"), phone = document.getElementById("s-phone");
-      var agree = document.getElementById("s-agree");
+      var org = document.getElementById("s-org"), agree = document.getElementById("s-agree");
+      var needsOrg = ["school", "ngo", "organization"].indexOf(role()) >= 0;
       phone.value = phone.value.replace(/\D/g, "").slice(-10);
       if (invalid(name, name.value.trim().length < 2)) msgs.push("your full name");
       if (invalid(email, !email.validity.valid || !email.value)) msgs.push("a valid email");
       if (invalid(phone, !!phone.value && !/^[6-9]\d{9}$/.test(phone.value))) msgs.push("a 10-digit Indian mobile number (or leave it empty)");
-      if (invalid(pass, pass.value.length < 8)) msgs.push("a password of at least 8 characters");
+      if (invalid(org, needsOrg && org.value.trim().length < 2)) msgs.push("your organisation's name");
+      if (invalid(pass, pass.value.length < 8 || !/[a-z]/i.test(pass.value) || !/\d/.test(pass.value))) msgs.push("a password of at least 8 characters with letters and numbers");
       if (!agree.checked) msgs.push("agreement to the Terms and Privacy policy");
       if (msgs.length) { err.textContent = "Please add " + msgs.join(", ") + "."; err.hidden = false; return; }
       err.hidden = true;
-      var data = { role: role(), name: name.value.trim(), email: email.value.trim(), phone: phone.value ? "+91" + phone.value : "",
-        org: document.getElementById("s-org").value.trim(), language: document.getElementById("s-lang").value };
+      var data = { role: role(), name: name.value.trim(), email: email.value.trim(), phone: phone.value || null,
+                   org: role() === "learner" ? null : (org.value.trim() || null), language: document.getElementById("s-lang").value,
+                   password: pass.value, agree: true };
       var btn = form.querySelector('button[type="submit"]');
-      var finish = function (mode) {
-        document.getElementById("done-title").textContent = "You're on the list, " + data.name.split(" ")[0] + ".";
-        if (mode === "account") {
-          document.getElementById("done-title").textContent = "Welcome, " + data.name.split(" ")[0] + "!";
-          document.getElementById("done-copy").textContent = "Your account is ready. Check your email to confirm your address.";
-        }
-        if (mode === "mail") {
-          var body = "Early-access sign-up\n\nRole: " + data.role + "\nName: " + data.name + "\nEmail: " + data.email + "\nMobile: " + (data.phone || "-") +
-            "\nOrganisation: " + (data.org || "-") + "\nLanguage: " + data.language;
-          document.getElementById("done-mail").href = "mailto:" + CONTACT_EMAIL + "?subject=" + encodeURIComponent("UnboxEd sign-up: " + data.name) + "&body=" + encodeURIComponent(body);
-          document.getElementById("done-send").hidden = false;
-        }
-        go(3);
-      };
+      if (!AUTH_API) {
+        err.textContent = "Accounts aren't open on this copy of the site. Please email " + CONTACT_EMAIL + ".";
+        err.hidden = false;
+        return;
+      }
       btn.disabled = true;
-      var req = AUTH_API ? post(AUTH_API + "/signup", Object.assign({ password: pass.value }, data)).then(function () { finish("account"); })
-        : FORM_ENDPOINT ? post(FORM_ENDPOINT, Object.assign({ topic: "signup" }, data)).then(function () { finish("listed"); })
-        : Promise.resolve(finish("mail"));
-      req.catch(function () { err.textContent = "We couldn't create your account just now. Please try again, or email " + CONTACT_EMAIL + "."; err.hidden = false; })
-        .then(function () { btn.disabled = false; });
+      post("/auth/signup", data).then(function (r) {
+        document.getElementById("done-title").textContent = "Welcome, " + data.name.split(" ")[0] + "!";
+        document.getElementById("done-copy").textContent = "Your account is ready. We've emailed you a link to confirm your address. Taking you in now…";
+        var cta = document.querySelector(".done-step .hero-cta");
+        if (cta) cta.innerHTML = '<a class="btn btn-primary" href="' + esc(r.redirect_to) + '">Open UnboxEd →</a>';
+        go(3);
+        setTimeout(function () { location.href = r.redirect_to; }, 1400);
+      }).catch(function (x) {
+        var keys = Object.keys(x.fields || {});
+        keys.forEach(function (k) { var el = document.getElementById(FIELD[k]); if (el) invalid(el, true); });
+        err.textContent = keys.length ? keys.map(function (k) { return x.fields[k]; }).join(" ") : x.message;
+        if (x.code === "EMAIL_TAKEN") { invalid(email, true); err.innerHTML = esc(x.message) + ' <a href="/login/">Log in</a>'; }
+        err.hidden = false;
+        btn.disabled = false;
+      });
     });
   }
 
@@ -485,20 +516,22 @@
       var id = document.getElementById("l-id"), pw = document.getElementById("l-pass"), st = document.getElementById("login-status");
       var bad = invalid(id, !id.value.trim()) | invalid(pw, !pw.value);
       if (bad) { status(st, false, "Enter your email or mobile and your password."); return; }
-      if (!AUTH_API) {
-        status(st, false, 'Sign-in opens as early-access accounts are set up. If you\'ve signed up, we\'ll email you when yours is ready. New here? <a href="/signup/">Create an account</a>.');
-        return;
-      }
-      post(AUTH_API + "/login", { id: id.value.trim(), password: pw.value, remember: login.remember.checked })
-        .then(function (r) { location.href = r.redirect || "/"; })
-        .catch(function () { status(st, false, "That email or password doesn't match. Try again, or reset your password."); });
+      if (!AUTH_API) { status(st, false, "Log-in isn't available on this copy of the site."); return; }
+      var btn = login.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      post("/auth/login", { identifier: id.value.trim(), password: pw.value, remember: login.remember.checked })
+        .then(function (r) { status(st, true, "Welcome back. Opening UnboxEd…"); location.href = r.redirect_to || APP_URL; })
+        .catch(function (x) { status(st, false, esc(x.message)); btn.disabled = false; });
     });
     reset.addEventListener("submit", function (e) {
       e.preventDefault();
       var em = document.getElementById("r-email"), st = document.getElementById("reset-status");
       if (invalid(em, !em.value || !em.validity.valid)) { status(st, false, "Enter the email you signed up with."); return; }
-      var done = function () { status(st, true, "If an account exists for " + em.value.replace(/[<>&"]/g, "") + ", a reset link is on its way. Check your inbox."); };
-      if (AUTH_API) post(AUTH_API + "/reset", { email: em.value.trim() }).then(done, done); else done();
+      var done = function () { status(st, true, "If an account exists for " + esc(em.value) + ", a reset link is on its way. Check your inbox."); };
+      if (!AUTH_API) { done(); return; }
+      post("/auth/forgot-password", { email: em.value.trim() }).then(done, function (x) {
+        if (x.code === "RATE_LIMITED" || x.code === "NETWORK") status(st, false, esc(x.message)); else done();
+      });
     });
   }
 })();

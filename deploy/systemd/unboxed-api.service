@@ -1,0 +1,16 @@
+# /etc/systemd/system/unboxed-api.service   (staging: copy as unboxed-api-staging.service with its own env file and port)
+[Unit]
+Description=UnboxEd API
+After=network.target postgresql.service
+
+[Service]
+User=unboxed
+WorkingDirectory=/srv/unboxed/current
+EnvironmentFile=/etc/unboxed/production.env
+Environment=PYTHONPATH=/srv/unboxed/current/apps/api:/srv/unboxed/current
+ExecStart=/srv/unboxed/venv/bin/uvicorn unboxed_api.main:app --host 127.0.0.1 --port 8040 --workers 2 --proxy-headers
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

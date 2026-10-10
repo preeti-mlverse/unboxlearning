@@ -15,7 +15,7 @@ SSH_OPTS=(-o StrictHostKeyChecking=accept-new)
 [ -n "${SSH_KEY:-}" ] && SSH_OPTS+=(-i "$SSH_KEY")
 
 echo "1/4  Building and checking links"
-python build.py --check
+python build.py --env production --check   # forms point at app.unboxlearning.in
 
 STAMP=$(date +%Y%m%d-%H%M%S)
 ARCHIVE="unboxed-site-$STAMP.tar.gz"

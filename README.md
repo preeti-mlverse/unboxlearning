@@ -1,63 +1,69 @@
-# Learning Transformation Engine
+# UnboxEd
 
-Turns trusted content — PDF, Word, PowerPoint, web pages, whole docs sites, Markdown/text, YouTube,
-audio/video, images — into an **adaptive, evidence-backed course**, shaped by *what kind of knowledge the
-content holds* and *what the learner is trying to achieve*.
+**Any knowledge in. Real learning out.**
 
-* Design: [`docs/ENGINE_DESIGN.md`](docs/ENGINE_DESIGN.md)
-* 3D/AR/VR, video, simulations, voice, multilingual, quality and efficacy: [`docs/ADVANCED_CAPABILITIES.md`](docs/ADVANCED_CAPABILITIES.md)
+This repo holds the UnboxEd platform: the product app, its API, the background worker and the marketing site
+(unboxlearning.in). It is in the **Foundation phase (Wave 0)**. Accounts, workspaces, a manual course editor,
+versions, private documents, background jobs, enrollment and progress are in place. These are what the knowledge
+engine (ingestion, knowledge graph, learning-experience compiler, tutor) plugs into next.
 
-## Run it
+```
+apps/
+  api/          FastAPI + SQLAlchemy + Pydantic: the API (auth, courses, documents, jobs, learning, admin)
+  web/          Next.js + TypeScript + Tailwind + Zod: the product app (app.unboxlearning.in)
+packages/
+  shared-types/ TypeScript types generated from the API's OpenAPI schema (never hand-edited)
+  ui/, learning-components/   reserved for later waves
+ai/             reserved: providers, ingestion, knowledge, compiler, tutor (empty during Foundation)
+database/
+  migrations/   Alembic migrations: every schema change lives here
+  seeds/        development seed data
+workers/        background job worker + job handlers
+site/           marketing site (static, python build.py) — sign-up and log-in call the API
+deploy/         nginx + systemd + release script for the app and API
+docs/foundation architecture, deployment, status against the Foundation spec
+legacy/         the earlier engine and app, kept for reference while Wave 1+ is rebuilt
+```
+
+## Run it locally
+
+You need Python 3.12, Node 22 and PostgreSQL 17. If you have Docker but no Postgres, `docker compose up --build`
+runs the whole stack in containers instead.
 
 ```bash
-# 1. once
-python -m pip install fastapi uvicorn python-multipart pydantic openai anthropic pymupdf python-docx python-pptx \
-    httpx beautifulsoup4 lxml trafilatura youtube-transcript-api python-dotenv numpy markdown
-npm --prefix web install
+# once: database, Python env, web deps
+psql -U postgres -h localhost -c "CREATE ROLE unboxed LOGIN PASSWORD 'unboxed_dev' CREATEDB"
+psql -U postgres -h localhost -c "CREATE DATABASE unboxed OWNER unboxed" -c "CREATE DATABASE unboxed_test OWNER unboxed"
+python -m venv .venv && .venv/Scripts/pip install -r apps/api/requirements-dev.txt     # .venv/bin on macOS/Linux
+npm --prefix apps/web install
+cp .env.example .env                      # every value has a local default
 
-# 2. add your key: copy .env.example to .env and set OPENAI_API_KEY (+ model names your account has)
-python -m engine.cli models          # verifies the key, lists models, runs a test call
+# schema + demo data
+.venv/Scripts/python -m alembic -c database/alembic.ini upgrade head
+.venv/Scripts/python database/seeds/seed.py
 
-# 3. start (two terminals)
-python -m uvicorn engine.api:app --port 8030
-npm --prefix web run dev             # http://localhost:5190
+# run (three terminals)
+.venv/Scripts/python -m uvicorn unboxed_api.main:app --app-dir apps/api --port 8040 --reload   # API  → http://localhost:8040/docs
+.venv/Scripts/python -m workers.worker                                                          # background jobs
+npm --prefix apps/web run dev                                                                    # app  → http://localhost:3010
 ```
 
-Without a key the engine runs on an **offline mock provider** (schema-valid placeholder text) so every
-screen and flow can be exercised. `python -m engine.cli gallery` seeds a course with one activity of every type.
-For a single-server deployment, `npm --prefix web run build` and the API serves the app at http://localhost:8030.
+The marketing site: `cd site && python build.py && python -m http.server 5195 --directory public`. Its
+/signup/ and /login/ pages create real accounts through the local API and hand you over to the app.
 
-## How it works
-
-```
-ingest → profile → (teacher picks goal + scope) → extract → concept graph → curriculum → plan → generate → validate/verify → review → learn
-```
-
-| Stage | Module | What it produces |
-|---|---|---|
-| Ingest | `engine/ingest/` | Elements (heading, paragraph, code, table, figure, equation, transcript…) with page/slide/timestamp and confidence; OCR/vision and speech-to-text fallbacks |
-| Index | `engine/index.py` | Structure-aware chunks; hybrid retrieval (BM25 + embeddings, rank fusion); learning units |
-| Profile | `engine/profile.py` | Genre, knowledge-type mix, unit roles (core/supporting/reference/boilerplate), suggested goals, cautions |
-| Knowledge | `engine/knowledge.py` | Per-unit concepts, relations, objectives, misconceptions, procedures, formulas, events, figures → merged prerequisite graph → goal-shaped curriculum |
-| Pedagogy | `engine/planner.py` | Lesson per objective: activate → model → practise → check → transfer, activity types chosen by knowledge type × goal × evidence × renderer capability, with rationale |
-| Activities | `engine/activities.py`, `engine/generate.py` | 26 typed activity schemas; evidence-bound generation; structural validation with auto-repair; evidence verification |
-| Learner | `engine/learner.py`, `engine/tutor.py` | Grading (auto / rubric / dialogue), BKT-style mastery, spaced review, remediation, Socratic source-grounded tutor, roleplay |
-| Evidence & interop | `engine/analytics.py`, `evidence.py`, `export.py`, `translate.py`, `estimate.py` | Item analysis, pre/post experiments, QTI and bundles, translation, cost estimates |
-| API / UI | `engine/api.py`, `web/` | Studio (setup, path, lessons review, knowledge graph, sources, learner analytics, AI usage) and learner app |
-
-Activity types (26): explanation, narrated explainer (animated storyboard + voice), worked example, code
-walkthrough, multiple choice, short answer, ordering, matching, sort-into-groups, fill-the-gaps, flashcards,
-predict-then-see, find-the-bug, decision scenario, timeline, compare table, process stepper, parameter explorer and
-distribution sampler (safe generated simulations), calculation, concept map, case study, teach-back, roleplay,
-label-the-diagram (vision), explore-in-3D (teacher-attached models with hotspots, AR on phones).
-
-Also built: pre-build cost estimate; AI status (e.g. "no credits") shown in the UI; reserve remediation items;
-course translation with shared mastery; item analytics; independent pre/post/delayed tests with an optional
-adaptive-vs-static experiment; QTI 2.1 export; portable course bundles (export/import).
+Seed accounts are `creator@unboxed.local`, `learner@unboxed.local` and `admin@unboxed.local`. The password is in
+`database/seeds/seed.py`. Without SMTP settings, verification and reset emails are written to `storage/outbox/`.
 
 ## Tests
 
 ```bash
-python -m pytest tests -q
-npm --prefix web run typecheck
+cd apps/api && ../../.venv/Scripts/python -m pytest      # API, permissions, versions, files, jobs, the full Foundation journey
+npm --prefix apps/web run typecheck                      # web app against the generated API types
+npm --prefix apps/web run types                          # regenerate types after changing an API schema
 ```
+
+## More
+
+- [docs/foundation/ARCHITECTURE.md](docs/foundation/ARCHITECTURE.md): how it fits together, and why
+- [docs/foundation/STATUS.md](docs/foundation/STATUS.md): the Foundation checklist (0A–0N), what's done and what's next
+- [docs/foundation/DEPLOY.md](docs/foundation/DEPLOY.md): staging and production on the VPS
